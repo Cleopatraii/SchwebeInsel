@@ -25,6 +25,7 @@ uniform sampler2D FragTexture_stone3;
 in vec3 FragPosition;
 in vec3 vertexZuFragmentNormal;
 in vec2 texKoordinaten;
+in float fogFactor;
 
 //3.Output
 out vec4 FragColor;
@@ -63,7 +64,11 @@ void main() {
    vec3 stoneMixColor = mix(vec3(0.2, 0.2, 0.2), stoneColor, ambi + diff + spec).rgb; // Lichtquelle1
    vec3 stoneFinColor = mix(stoneMixColor, vec3(0.2, 0.0, 0.0), diff2/2.0); // Lichtquelle2
 
-   //4.Final Color
-   FragColor = vec4(stoneFinColor.rgb, 1.0);
+   //4.Fog Color 
+   vec3 fogColor = vec3(0.5, 0.5, 0.5);
+   vec3 finalColor = mix(stoneFinColor.rgb, fogColor, 1.0 - fogFactor); 
+
+   //5.Final Color
+   FragColor = vec4(finalColor.rgb, 1.0);
 
 }

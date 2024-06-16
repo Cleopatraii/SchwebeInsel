@@ -8,7 +8,7 @@
 #include "fragmentShader.h"
 
 
-GLuint program; //自定义的着色器程序shader
+GLuint program; 
 GLuint vaoFan;
 GLuint vaoRest;
 //GLuint colorLoc; //Uniform变量color的位置
@@ -214,32 +214,7 @@ void translate(GLfloat* out, GLfloat* in, GLfloat* v) {
     matrix_multiply(out,T,in);
 }
 
-// //Ue4.1.3: out = S(v) * in
-// void scale(GLfloat* out, GLfloat* in, GLfloat* v) {
 
-//     // Der Vektor v ist ein 3-Komponenten-Vektor
-//     GLfloat x = v[0]; // ax
-//     GLfloat y = v[1]; // ay
-//     GLfloat z = v[2]; // az
- 
-//     //    v          T(v)            in              out
-//     //    ax     | 1 0 0 ax |    | x 0 0 0 |     x+ax  0 0 0
-//     //    by     | 0 1 0 ay |    | y 0 0 0 |     y+ay  0 0 0
-//     //    az     | 0 0 1 az |    | z 0 0 0 |     z+az  0 0 0
-//     //           | 0 0 0 1  |    | 1 0 0 0 |     1     0 0 0
-
-//     //T(v)
-//     GLfloat S[16] = {
-//        x,0.0f,0.0f,0.0f,
-//        0.0f,y,0.0f,0.0f,
-//        0.0f,0.0f,z,0.0f,
-//        0.0f,0.0f,0.0f,1.0f
-//     };
-
-//     // out = T(v) * in 
-//     matrix_multiply(out,S,in);
-
-// }
 void rotatex(GLfloat* out, GLfloat* in, GLfloat angle) {
 
    //R(v)
@@ -669,7 +644,7 @@ void draw(void) {
     glEnable(GL_DEPTH_TEST);
 
     GLfloat lookAtMatrix[16];
-    GLfloat eye[3] = {0.0f,2.5f,5.0f};
+    GLfloat eye[3] = {-4.0f,0.0f,0.0f};
     GLfloat center[3] = {0.0f,0.0f,0.0f};
     GLfloat up[3] = {0.0f,1.0f,0.0f};
     lookAt(lookAtMatrix, eye, center, up);
@@ -713,7 +688,7 @@ void draw(void) {
 
     //rotatey(arMatrix, rMatrix, -rotationAngle);
     //glUniformMatrix4fv(worldLoc, 1, GL_TRUE, arMatrix);
-    rotationAngle += 0.01f;
+    rotationAngle += 0.001f;
 
     //Ue7.1
     GLint matAmbLoc = glGetUniformLocation(program, "mat.ambient");
@@ -764,25 +739,25 @@ void draw(void) {
     GLfloat viewWordMatrix[16];
     matrix_multiply(viewWordMatrix, lookAtMatrix, fanMatrix);
     //printf("viewWordMatrix: \n");
-    printMatrix4x4(viewWordMatrix);
+    //printMatrix4x4(viewWordMatrix);
 
     //(2) 4->3
     GLfloat Mat4x4zuMat3x3[9];
     normalMatrixFromMatrix4x4(Mat4x4zuMat3x3, viewWordMatrix);
     //printf("Mat4x4zuMat3x3: \n");
-    printMatrix3x3(Mat4x4zuMat3x3);
+    //printMatrix3x3(Mat4x4zuMat3x3);
 
     //(3) Inverse
     GLfloat inverseMat3x3[9];
     inverseMatrix3x3(inverseMat3x3, Mat4x4zuMat3x3);
     //printf("inverseMat3x3: \n");
-    printMatrix3x3(inverseMat3x3);
+    //printMatrix3x3(inverseMat3x3);
 
     //(4) Transponieren
     GLfloat transpMatrix[9];
     transponieren(transpMatrix, inverseMat3x3);
     //printf("transpMatrix: \n");
-    printMatrix3x3(transpMatrix);
+    //printMatrix3x3(transpMatrix);
     //printf("\n");
     glUniformMatrix3fv(normalenMatrixLoc, 1, GL_TRUE, transpMatrix);
 

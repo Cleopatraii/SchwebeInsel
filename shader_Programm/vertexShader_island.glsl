@@ -12,6 +12,7 @@ layout (location = 2) in vec2 textureCoodi;  //texture_in
 out vec3 FragPosition;  // Keine Input, sondern durch Schattierung berechnen
 out vec3 vertexZuFragmentNormal; // Normalen benutzen, um Farbe zu berechen, das alles in "Fragment-Shader" stattfinden
 out vec2 texKoordinaten; //texture_out, Texture-Koordinaten
+out float fogFactor;// Fog
 
 //3.Transformation
 uniform mat4 proj; 
@@ -24,6 +25,7 @@ uniform mat3 normalenMatrix;
 void main() {
    //1 TeaKanel-Vertex Position         
    gl_Position = proj * view * world * vec4(vInPosition, 1.0);
+   vec4 viewPosition=view * world * vec4(vInPosition, 1.0);
 
    //2 Transformation für Beleuchtung
    vec4 FragPos = view * world * vec4(vInPosition, 1.0);            //Beleuchtung findet in View-Koordinaten statt
@@ -37,6 +39,12 @@ void main() {
    
    //Texture-Mapping
    texKoordinaten = textureCoodi;
+
+   // Fog Faktor rechnen
+    float height = viewPosition.y;
+    float fogStart = -2; // 雾开始的高度
+    float fogEnd = 2.3; // 雾结束的高度（更低）
+   fogFactor = smoothstep(fogStart, fogEnd, height);
 }
 
 

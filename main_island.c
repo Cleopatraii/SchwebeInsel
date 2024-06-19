@@ -688,6 +688,8 @@ void init1(void) {
     vboUndvao(&objVboLen_island, objVbo_island, &vao_island, 1);
 
     glClearColor(191.0f/255.0f,217.0f/255.0f,204.0f/255.0f,1.0); //设置窗口背景颜色
+
+
 }
 void init2(void) {
     //shader
@@ -732,6 +734,8 @@ void init3(void) {
     vboUndvao(&objVboLen_energyObject, objVbo_energyObject, &vao_energyObject, 0);
 
     glClearColor(191.0f/255.0f,217.0f/255.0f,204.0f/255.0f,1.0); //设置窗口背景颜色
+
+  
 }
 
 
@@ -1188,7 +1192,7 @@ void draw2(void) {
 
 void draw3(void) {
     glUseProgram(program_energyObject);        //使用指定的着色器程序 program 进行渲染
-
+   
     //Uniform: Proj-Matrix (View ohne Perspektion -> View mit Perspektion)
     GLint projLoc = glGetUniformLocation(program_energyObject, "proj");
     GLfloat perspectiveMatrix[16];
@@ -1274,6 +1278,9 @@ void draw3(void) {
     glBindBuffer(GL_ARRAY_BUFFER, vbo_energyObject);
     glDrawArrays(GL_TRIANGLES, 0, objVboLen_energyObject/8); 
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
+
+
+    
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {

@@ -43,10 +43,12 @@ GLuint vbo_energyObject;
 GLuint vao_skybox;
 GLuint vbo_skybox;
 
-
 float rotationAngleFan; //Um objekt umdrehen zu können 
 float rotationAngleGanzIsland;
 float rotationAngleEnergieObject;
+float rotationAngleIslandAroundEnergie;
+float rotateAroundCrystal;
+
 
 GLuint texture_stone1;
 GLuint texture_stone2;
@@ -701,20 +703,40 @@ void draw1(void) {
     //Uniform: View-Matrix (World -> View)
     GLint viewLoc = glGetUniformLocation(program_island, "view");
     GLfloat lookAtMatrix[16];
-    GLfloat eye[3] = {0.0f,1.0f,5.0f};
+    GLfloat eye[3] = {0.0f,1.0f,8.0f};
     GLfloat center[3] = {0.0f,0.0f,0.0f};
     GLfloat up[3] = {0.0f,1.0f,0.0f};
     lookAt(lookAtMatrix, eye, center, up);
     glUniformMatrix4fv(viewLoc, 1, GL_TRUE, lookAtMatrix);    
+
+    GLfloat radiusAroundCrystal = 3.0; // 旋转半径
+    GLfloat crystalCenter[3] = {-0.0f, 0.0f, 0.0f}; // 水晶中心位置
+
+    rotationAngleIslandAroundEnergie += 0.01; // 更新旋转角度
+
+    GLfloat islandPosX = crystalCenter[0] + radiusAroundCrystal * cos(rotationAngleIslandAroundEnergie);
+    GLfloat islandPosZ = crystalCenter[2] + radiusAroundCrystal * sin(rotationAngleIslandAroundEnergie);
+    GLfloat XZPosition[3] = {islandPosX, crystalCenter[1], islandPosZ};
+
+    GLfloat islandTransformationMatrix[16];
+    identity(islandTransformationMatrix);
+    translate(islandTransformationMatrix, islandTransformationMatrix, XZPosition);
+
+
     
     //Uniform: World-Matrix (Lokale -> World)
     GLint worldLoc = glGetUniformLocation(program_island, "world");
     GLfloat iMatrix[16];
+    GLfloat tMatrix[16];
+    GLfloat sMatrix[16];
+    GLfloat rMatrix[16];
     GLfloat arMatrix[16];
     identity(iMatrix);
     //*Animation: rotation
     rotatey(arMatrix, iMatrix, -rotationAngleGanzIsland);
-    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, arMatrix);
+matrix_multiply(islandTransformationMatrix, islandTransformationMatrix, arMatrix);
+    
+    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, islandTransformationMatrix);
     rotationAngleGanzIsland += 0.01f;
 
     //Beleuchtung UniformPara Konfikurieren
@@ -787,7 +809,7 @@ void draw2(void) {
     //Uniform: View-Matrix (World -> View)
     GLint viewLoc = glGetUniformLocation(program_restTeil, "view");
     GLfloat lookAtMatrix[16];
-    GLfloat eye[3] = {0.0f,1.0f,5.0f};
+    GLfloat eye[3] = {0.0f,1.0f,8.0f};
     GLfloat center[3] = {0.0f,0.0f,0.0f};
     GLfloat up[3] = {0.0f,1.0f,0.0f};
     lookAt(lookAtMatrix, eye, center, up);
@@ -844,6 +866,26 @@ void draw2(void) {
     //Beleuchtung UniformPara Konfikurieren
     uniformParaFuerBeleuchtung(&program_restTeil);
 
+//     //*Animation 3: Rotation around crystalCenter
+    
+    GLfloat radiusAroundCrystal = 3.0; // //旋转半jing
+    GLfloat crystalCenter[3] = {-0.0f, 0.0f, 0.0f};
+
+    rotationAngleIslandAroundEnergie += 0.01; // 更新角度
+
+    GLfloat islandPosX = crystalCenter[0] + radiusAroundCrystal * cos(rotationAngleIslandAroundEnergie);
+    GLfloat islandPosZ = crystalCenter[2] + radiusAroundCrystal * sin(rotationAngleIslandAroundEnergie);
+    GLfloat XZPosition[3]={islandPosX, crystalCenter[1], islandPosZ};
+
+    GLfloat islandTransformationMatrix[16];
+    identity(islandTransformationMatrix);
+    translate(islandTransformationMatrix, islandTransformationMatrix, XZPosition);
+  
+     GLfloat finalTransformationMatrix[16];
+     identity(finalTransformationMatrix);
+     matrix_multiply(finalTransformationMatrix, islandTransformationMatrix, ganzlandTransformationMatrix);
+    
+
     //vao
     GLint status;
     glValidateProgram(program_restTeil);   //验证着色器程序的有效性
@@ -856,17 +898,17 @@ void draw2(void) {
         printf("%s",infoLog);
     }
     
-    //Opaque Object
+   //Opaque Object
     glEnable(GL_DEPTH_TEST);
     //Bleuchtung mit umdrehen: NormalenMatrix für ganz Island
     // • N = view * world = matrix_multiply(out,lookAtMatrix,arMatrix);
     // • N(4x4) -> M(3x3) -> inverse -> transponieren 转置矩阵 
-    normalenMatrix(&program_restTeil, lookAtMatrix, ganzlandTransformationMatrix);
+    normalenMatrix(&program_restTeil, lookAtMatrix, finalTransformationMatrix);
 
     //(1) Platform
     glBindVertexArray(vao_platform);    
     glBindBuffer(GL_ARRAY_BUFFER, vbo_platform);
-    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, ganzlandTransformationMatrix); //ganzlandTransformationMatrix
+    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, finalTransformationMatrix); //ganzlandTransformationMatrix
     //texture_platform
     GLint texturePLoc = glGetUniformLocation(program_restTeil, "FragTexture_restTeil");
     glUniform1i(texturePLoc, 3);
@@ -881,7 +923,7 @@ void draw2(void) {
     //(2) Haus
     glBindVertexArray(vao_haus);    
     glBindBuffer(GL_ARRAY_BUFFER, vbo_haus);
-    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, ganzlandTransformationMatrix);
+    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, finalTransformationMatrix);
     //texture_haus
     GLint textureHausLoc = glGetUniformLocation(program_restTeil, "FragTexture_restTeil");
     glUniform1i(textureHausLoc, 4);
@@ -893,10 +935,10 @@ void draw2(void) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    //(3) Tree
+   //(3) Tree
     glBindVertexArray(vao_tree);    
     glBindBuffer(GL_ARRAY_BUFFER, vbo_tree);
-    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, ganzlandTransformationMatrix);
+    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, finalTransformationMatrix);
     //texture_tree
     GLint textureTreeLoc = glGetUniformLocation(program_restTeil, "FragTexture_restTeil");
     glUniform1i(textureTreeLoc, 5);
@@ -909,7 +951,6 @@ void draw2(void) {
     glBindVertexArray(0);
 
     //Transparent Object
-
     //(4) Fan
     glBindVertexArray(vao_fan);    
     glBindBuffer(GL_ARRAY_BUFFER, vbo_fan);
@@ -919,9 +960,10 @@ void draw2(void) {
     // • N(4x4) -> M(3x3) -> inverse -> transponieren 转置矩阵 
     normalenMatrix(&program_restTeil, lookAtMatrix, fanTransformationMatrix);
 
+
     //WorldKoordinaten anpassen
     GLfloat fantransform[16];
-    matrix_multiply(fantransform, ganzlandTransformationMatrix, fanTransformationMatrix);
+    matrix_multiply(fantransform, finalTransformationMatrix, fanTransformationMatrix);
     glUniformMatrix4fv(worldLoc, 1, GL_TRUE, fantransform); //fanTransformationMatrix
 
     //texture_fan
@@ -936,11 +978,13 @@ void draw2(void) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
+
+
 }
 
 void draw3(void) {
     glUseProgram(program_energyObject);        //使用指定的着色器程序 program 进行渲染
-
+   
     //Uniform: Proj-Matrix (View ohne Perspektion -> View mit Perspektion)
     GLint projLoc = glGetUniformLocation(program_energyObject, "proj");
     GLfloat perspectiveMatrix[16];
@@ -950,7 +994,7 @@ void draw3(void) {
     //Uniform: View-Matrix (World -> View)
     GLint viewLoc = glGetUniformLocation(program_energyObject, "view");
     GLfloat lookAtMatrix[16];
-    GLfloat eye[3] = {0.0f,2.5f,5.0f};
+    GLfloat eye[3] = {0.0f,2.5f,8.0f};
     GLfloat center[3] = {0.0f,0.0f,0.0f};
     GLfloat up[3] = {0.0f,1.0f,0.0f};
     lookAt(lookAtMatrix, eye, center, up);
@@ -960,8 +1004,10 @@ void draw3(void) {
     GLint worldLoc = glGetUniformLocation(program_energyObject, "world");
     GLfloat iMatrix[16];
     GLfloat tMatrix[16];
+    GLfloat rMatrix[16];
+    GLfloat arMatrix[16];
     identity(iMatrix);
-    GLfloat verschieben[3] = {-4.0f, 0.0f, -3.0f};
+    GLfloat verschieben[3] = {0.0f, 0.0f, 0.0f};
     translate(tMatrix, iMatrix, verschieben);   
 
     //Animation: energieObject

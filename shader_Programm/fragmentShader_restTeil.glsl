@@ -56,7 +56,8 @@ void main() {
    vec3 restTeilMixColor = mix(vec3(0.2, 0.2, 0.2), restTeilColor.rgb, ambi + diff + spec).rgb; // Lichtquelle1 
    vec3 restTeilFinColor = mix(restTeilMixColor, vec3(0.2, 0.0, 0.0), diff2/2.0); // Lichtquelle2
 
+
    //4.Final Color
-   FragColor = vec4(restTeilFinColor, 1.0);
+   FragColor = vec4(restTeilFinColor.rgb, 1.0);
 
 }

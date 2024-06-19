@@ -23,6 +23,10 @@ in vec3 vertexZuFragmentNormal;
 
 //3.Output
 out vec4 FragColor;
+//out vec4 BrightColor; // 高亮输出
+
+//layout(location = 0) out vec4 FragColor;  // 常规颜色输出
+//layout(location = 1) out vec4 BrightColor; // 高亮颜色输出
 
 void main() {
 
@@ -46,6 +50,10 @@ void main() {
    vec3 reflectRichtung = normalize(reflect(-L, N));     // 反射光方向
    float spec = pow(max(dot(augenRichtung, reflectRichtung), 0.0), mat.shininess); // 偏差夹脚 (r,a)，Phone-Beleuchtungsmodellen
 //   resultColor += mat.specular * light.color * spec; 
+
+ // 总亮度，可以调整阈值以获取不同的高亮效果
+ //  float brightness = dot(resultColor, vec3(0.2126, 0.7152, 0.0722));
+ //  BrightColor = brightness > 1.5 ? vec4(resultColor, 1.0) : vec4(0.0, 0.0, 0.0, 1.0);
 
    FragColor = vec4(resultColor, 1.0);
 }

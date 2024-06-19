@@ -1,5 +1,6 @@
 GLEW_LIBS=$(shell pkg-config glew --libs)
 GLFW_LIBS=$(shell pkg-config glfw3 --libs)
+<<<<<<< HEAD
 INCLUDE_PATHS=$(shell pkg-config glew --cflags) $(shell pkg-config glfw3 --cflags) -I/usr/include -I/usr/local/include
 
 
@@ -27,3 +28,15 @@ main_funk.o: main_funk.c main_funk.h
 
 test_funk: test_funk.c main_funk.o
 	gcc -o test_funk test_funk.c main_funk.o $(GLEW_LIBS) $(GLFW_LIBS) -lm -lgsl -lgslcblas
+=======
+
+# Ziel: Ausfuehrbare Datei
+cgIsland: main_island.c vertexShader_island.h fragmentShader_island.h vertexShader_restTeil.h fragmentShader_restTeil.h vertexShader_energyObject.h fragmentShader_energyObject.h
+	gcc -g -Wall -o cgIsland main_island.c $(GLEW_LIBS) $(GLFW_LIBS) -lm
+
+cgEnergy: main_energyObject.c fragmentShader_energyObject.h
+	gcc -o cgEnergy main_energyObject.c $(GLEW_LIBS) $(GLFW_LIBS) -lm -framework OpenGL
+
+%.h: shader_Programm/%.glsl
+	xxd -i $< > $@
+>>>>>>> Sprint2

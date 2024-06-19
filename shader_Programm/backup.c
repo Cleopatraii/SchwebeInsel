@@ -1,5 +1,6 @@
 #include <stdio.h>
 
+<<<<<<< HEAD
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <math.h>
@@ -17,10 +18,19 @@
 #include "vertexShader_skybox.h"
 #include "fragmentShader_skybox.h"
 #include "main_funk.h"
+=======
+#include </opt/homebrew/Cellar/glew/2.2.0_1/include/GL/glew.h>
+#include </opt/homebrew/Cellar/glfw/3.4/include/GLFW/glfw3.h>
+#include <math.h>
+#include <stdlib.h>
+#include "vertexShader_energyObject.h"
+#include "fragmentShader_energyObject.h"
+>>>>>>> Sprint2
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "shader_Programm/stb_image.h"
 
+<<<<<<< HEAD
 #define M_PI 3.1415926
 
 GLuint program_island; //selbst definierte Shader-Programm
@@ -34,6 +44,15 @@ GLuint vao_island;     //vao 是 OpenGL 中一种状态对象，用于存储顶�
 GLuint vbo_island;     //创建缓冲对象标识符/变量(用来存储缓冲对象)，此时该变量相当于NULL
 GLuint vao_platform;
 GLuint vbo_platform; 
+=======
+GLuint program_island; //selbst definierte Shader-Programm
+GLuint program_restTeil;
+GLuint program_energyObject;
+GLuint vao_island;     //vao 是 OpenGL 中一种状态对象，用于存储顶点数组相关的状态，包括顶点属性指针的设置和启用状态等
+GLuint vbo_island;     //创建缓冲对象标识符/变量(用来存储缓冲对象)，此时该变量相当于NULL
+GLuint vao_plattform;
+GLuint vbo_plattform; 
+>>>>>>> Sprint2
 GLuint vao_haus;
 GLuint vbo_haus;
 GLuint vao_fan;
@@ -42,6 +61,7 @@ GLuint vao_tree;
 GLuint vbo_tree;
 GLuint vao_energyObject;
 GLuint vbo_energyObject;
+<<<<<<< HEAD
 GLuint vao_skybox;
 GLuint vbo_skybox;
 
@@ -50,6 +70,9 @@ float rotationAngleFan; //Um objekt umdrehen zu können
 float rotationAngleGanzIsland;
 float rotationAngleEnergieObject;
 
+=======
+float rotationAngle; //Um objekt umdrehen zu können 
+>>>>>>> Sprint2
 GLuint texture_stone1;
 GLuint texture_stone2;
 GLuint texture_stone3;
@@ -57,11 +80,253 @@ GLuint texture_platform;
 GLuint texture_tree;
 GLuint texture_fan;
 GLuint texture_haus;
+<<<<<<< HEAD
 GLuint texture_skybox;
 
 GLsizei width = 800;
 GLsizei height = 600;
 
+=======
+
+//Hilfefunktion: Matrix verarbeiten
+
+//(1) Matrix normieren
+void normierung(GLfloat *out, GLfloat* in){
+    GLfloat vactorX = in[0];
+    GLfloat vactorY = in[1];
+    GLfloat vactorZ = in[2];
+    GLfloat gross = sqrtf(vactorX*vactorX + vactorY*vactorY + vactorZ*vactorZ);
+    out[0] = vactorX / gross;
+    out[1] = vactorY / gross;
+    out[2] = vactorZ / gross;
+}
+//(2) Matrix korpieren
+void kopieren (GLfloat* neu, GLfloat* alt) {
+    for (int i=0; i<4; i++) {
+        for (int j=0; j<4; j++) {
+            neu[4*i+j]=alt[4*i+j];
+        }
+    }
+}
+//(3) Matrix multiplikation
+void  matrix_multiply(GLfloat* result, GLfloat* a, GLfloat* b) {
+    GLfloat m1[16];
+    GLfloat m2[16];
+    kopieren(m1,a);
+    kopieren(m2,b);
+    for (int i = 0; i < 4; i++) {
+        for (int j = 0; j < 4; j++) {
+            result[i * 4 + j] = 0.0f; //inizialisieren
+            for (int k = 0; k < 4; k++) {
+                result[i * 4 + j] += m1[i * 4 + k] * m2[k * 4 + j];
+            }
+        }
+    }
+}
+
+//Funktion: Zu World-Koordinatensystem gehen
+//   Szene transformieren, um Kamera im Ursprung zu bleiben
+//   就是有 eye, center, up的偏差，要利用out把这些偏差纠正过来
+void lookAt(GLfloat* out, GLfloat* eye, GLfloat* center, GLfloat* up) {
+    GLfloat eyeX = eye[0]; //Eye
+    GLfloat eyeY = eye[1]; 
+    GLfloat eyeZ = eye[2]; 
+    GLfloat lookX = center[0]; //Look
+    GLfloat lookY = center[1]; 
+    GLfloat lookZ = center[2]; 
+
+    //1.Parameter: n = eye - look
+    GLfloat n[3] = { eyeX-lookX, eyeY-lookY, eyeZ-lookZ};
+    // GLfloat nn[] = {
+    //     eyeX-lookX,       0,               0,
+    //     0,           eyeY-lookY,           0,
+    //     0,                0,          eyeZ-lookZ
+    // };
+    GLfloat nn[3];
+    normierung(nn,n);
+    GLfloat nnX = nn[0]; // ax
+    GLfloat nnY = nn[1]; // ay
+    GLfloat nnZ = nn[2]; // az
+
+    //2.Parameter: u  = up • n
+    //             up = (0,1,0)
+    //  u'= (
+    //     n'z, 
+    //     0, 
+    //     -n'x
+    //  )
+    // GLfloat unX = nnZ; 
+    // GLfloat unY = 0.0f;
+    // GLfloat unZ = -nnX;
+    GLfloat upn[3];
+    normierung(upn,up);
+    GLfloat unX = upn[1] * nnZ - nnY * upn[2];
+    GLfloat unY = upn[2] * nnX - upn[0] * nnZ;
+    GLfloat unZ = upn[0] * nnY - nnX * upn[1];
+
+    //3.Parameter: v
+    //  v'= (
+    //     -n'x•n'y, 
+    //     (n'x)^2 + (n'y)^2, 
+    //     -n'y • n'z
+    //  )
+    // GLfloat vnX = -nnX * nnY; //v[0] = n[1] * u[2] - u[1] * n[2];
+    // GLfloat vnY = nnX*nnX + nnY*nnY;
+    // GLfloat vnZ = -nnY * nnZ;
+    //3.v=n*u
+    GLfloat vnX = nnY * unZ - unY * nnZ; //v[0] = n[1] * u[2] - u[1] * n[2];
+    GLfloat vnY = nnZ * unX - nnX * unZ; //v[1] = n[0] * u[2] - u[0] * n[2];
+    GLfloat vnZ = nnX * unY - unX * nnY; //v[2] = n[0] * u[1] - u[0] * n[1];
+
+    //3.Parameter: v
+    //   tx=-u' • eye
+    //   ty=-v' • eye
+    //   tz=-n' • eye
+    GLfloat tX = -unX * eyeX - unY * eyeY - unZ * eyeZ;
+    GLfloat tY = -vnX * eyeX - vnY * eyeY - vnZ * eyeZ;
+    GLfloat tZ = -nnX * eyeX - nnY * eyeY - nnZ * eyeZ;
+
+    //Inverse Transformations
+    //        out
+    //| u'x  u'y  u'z  tx |  
+    //| v'x  v'y  v'z  ty |  
+    //| n'x  n'y  n'z  tz |  
+    //|  0    0    0    1 |
+    GLfloat result[] = {
+        unX,  unY,  unZ,  tX,
+        vnX,  vnY,  vnZ,  tY,
+        nnX,  nnY,  nnZ,  tZ,
+        0.0f, 0.0f, 0.0f, 1.0f
+    };
+    kopieren(out, result);
+}
+
+//Funktion: "view frustrum": Abbildung "Pyramidenstumpf" auf "Würfel"
+//  投影: (x,y,z)->(1,1,1)
+void perspective(GLfloat* out, GLfloat fovy, GLfloat aspect, GLfloat near, GLfloat far) {
+    //1. wir haben schon 
+    //   n, f
+    //2. t = n•tan(fovy/2)
+    GLfloat t = near * tanf(fovy/2.0f);
+    //3. r = aspect * t
+    GLfloat r = aspect * t;
+
+    //                 M
+    //| n/r   0        0            0      |  
+    //|  0   n/t       0            0      |  
+    //|  0    0   (f+n)/(n-f)  (2fn)/(n-f) |  
+    //|  0    0        -1           0      |
+    GLfloat result[] = {
+        near/r,   0.0f,            0.0f,                     0.0f,
+        0.0f,    near/t,           0.0f,                     0.0f,
+        0.0f,     0.0f,   (far+near)/(near-far),  (2*far*near)/(near-far),
+        0.0f,     0.0f,           -1.0f,                     0.0f
+    };
+    kopieren(out, result);
+}
+
+//Test
+void printMatrix4x4(GLfloat* out) {
+    for (int i=0; i<4; i++) {
+        for (int j=0; j<4; j++) {
+            printf("%f ",out[i*4+j]);
+        }
+        printf("\n");
+    }
+}
+void printMatrix3x3(GLfloat* out) {
+    for (int i=0; i<3; i++) {
+        for (int j=0; j<3; j++) {
+            printf("%f, ",out[i*3+j]);
+        }
+        printf("\n");
+    }
+}
+
+//Funktion: Zu View-Koordinatensystem gehen
+//(0)Identify
+void identity(GLfloat* out) {
+    // out = 1,0,0,0
+    //       0,1,0,0
+    //       0,0,1,0
+    //       0,0,0,1
+    for (int i = 0; i < 4; ++i) {
+        for (int j = 0; j < 4; ++j) {
+            if (i == j) {
+                out[i * 4 + j] = 1.0f; //i==j时，为1.0
+            } else {
+                out[i * 4 + j] = 0.0f;
+            }
+        }
+    }
+}
+//(1)Translation
+void translate(GLfloat* out, GLfloat* in, GLfloat* v) {
+    
+    // Der Vektor v ist ein 3-Komponenten-Vektor
+    GLfloat x = v[0]; // ax
+    GLfloat y = v[1]; // ay
+    GLfloat z = v[2]; // az
+ 
+    //    v          T(v)            in              out
+    //    ax     | 1 0 0 ax |    | x 0 0 0 |     x+ax  0 0 0
+    //    by     | 0 1 0 ay |    | y 0 0 0 |     y+ay  0 0 0
+    //    az     | 0 0 1 az |    | z 0 0 0 |     z+az  0 0 0
+    //           | 0 0 0 1  |    | 1 0 0 0 |     1     0 0 0
+
+    //T(v)
+    GLfloat T[16] = {
+       1.0f,0.0f,0.0f,x,
+       0.0f,1.0f,0.0f,y,
+       0.0f,0.0f,1.0f,z,
+       0.0f,0.0f,0.0f,1.0f
+    };
+
+    // out = T(v) * in 
+    matrix_multiply(out,T,in);
+}
+//(2)Skalierung
+void scale(GLfloat* out, GLfloat* in, GLfloat* v) {
+
+    // Der Vektor v ist ein 3-Komponenten-Vektor
+    GLfloat x = v[0]; // ax
+    GLfloat y = v[1]; // ay
+    GLfloat z = v[2]; // az
+ 
+    //    v          T(v)            in              out
+    //    ax     | 1 0 0 ax |    | x 0 0 0 |     x+ax  0 0 0
+    //    by     | 0 1 0 ay |    | y 0 0 0 |     y+ay  0 0 0
+    //    az     | 0 0 1 az |    | z 0 0 0 |     z+az  0 0 0
+    //           | 0 0 0 1  |    | 1 0 0 0 |     1     0 0 0
+
+    //T(v)
+    GLfloat S[16] = {
+       x,0.0f,0.0f,0.0f,
+       0.0f,y,0.0f,0.0f,
+       0.0f,0.0f,z,0.0f,
+       0.0f,0.0f,0.0f,1.0f
+    };
+
+    // out = T(v) * in 
+    matrix_multiply(out,S,in);
+
+}
+//(3)Rotation
+void rotatey(GLfloat* out, GLfloat* in, GLfloat angle) {
+
+   //R(v)
+    GLfloat R[16] = {
+       cosf(angle),0.0f,sinf(angle),0.0f,
+       0.0f,1.0f,0.0f,0.0f,
+       -sinf(angle),0.0f,cosf(angle),0.0f,
+       0.0f,0.0f,0.0f,1.0f
+    };
+
+    // out = T(v) * in 
+    matrix_multiply(out,R,in);
+
+}
+>>>>>>> Sprint2
 
 //Hilfefunktion: Obj-Datei lesen
 
@@ -85,6 +350,7 @@ typedef struct {
 //Eingabe: (1) Zu ledense OBJ-Datei-Name, (2) leere vbo-objekt-Zeiger, (3) leere vbo-Große
 //Ausgabe: (1) Ausgefüllte vbo-objekt-Zeiger, (2) Ausgefüllte vbo-Große
 void readOBJ(const char* filename, Flaeche8f** vboOut, long* vboLen) {
+<<<<<<< HEAD
 
     // Null prüfen
     assert(filename != NULL);
@@ -94,6 +360,8 @@ void readOBJ(const char* filename, Flaeche8f** vboOut, long* vboLen) {
     // filename kann nicht leer sein
     assert(strlen(filename) > 0); 
     
+=======
+>>>>>>> Sprint2
     FILE *file = fopen(filename, "r");
     if (!file) {
         printf("Datei konnte nicht geöffnet werden.");
@@ -210,9 +478,12 @@ long objVboLen_fan=0;
 //Object6: vbo von energyObject-Model
 Flaeche8f* objVbo_energyObject; 
 long objVboLen_energyObject=0; 
+<<<<<<< HEAD
 //Object7: vbo von Skybox-Model
 Flaeche8f* objVbo_skybox;
 long objVboLen_skybox=0;
+=======
+>>>>>>> Sprint2
 
 //Funktion: Beleuchtung mit Normalenmatrix
 
@@ -236,6 +507,7 @@ typedef struct {
     Vec3 ambient;
 } QuelleLightParams;
 
+<<<<<<< HEAD
 //Funktion: Texture
 // (1) Bilddaten->Texturobjekt, image->texture
 void textureMapping(const char *str, GLuint* texture){
@@ -246,6 +518,51 @@ void textureMapping(const char *str, GLuint* texture){
     // filename kann nicht leer sein
     assert(strlen(str) > 0);
      
+=======
+// (1) Inverse-Matrix3x3 Berechnen
+float inverseMatrix3x3(float* result, float* mat) {
+    float det = mat[0] * (mat[4]*mat[8] - mat[5]*mat[7]) -
+                mat[1] * (mat[3]*mat[8] - mat[5]*mat[6]) +
+                mat[2] * (mat[3]*mat[7] - mat[4]*mat[6]);
+    if (det == 0.0) {
+        printf ("Warnung: det == 0 !!!!!\n");
+        return 0.0;
+    }
+    float invDet = 1.0f / det;
+
+    result[0] = (mat[4]*mat[8] - mat[5]*mat[7]) * invDet;
+    result[3] = (mat[5]*mat[6] - mat[3]*mat[8]) * invDet;
+    result[6] = (mat[3]*mat[7] - mat[4]*mat[6]) * invDet;
+    result[1] = (mat[2]*mat[7] - mat[1]*mat[8]) * invDet;
+    result[4] = (mat[0]*mat[8] - mat[2]*mat[6]) * invDet;
+    result[7] = (mat[1]*mat[6] - mat[0]*mat[7]) * invDet;
+    result[2] = (mat[1]*mat[5] - mat[2]*mat[4]) * invDet;
+    result[5] = (mat[2]*mat[3] - mat[0]*mat[5]) * invDet;
+    result[8] = (mat[0]*mat[4] - mat[1]*mat[3]) * invDet;
+
+    return det;
+}
+// (2) Matrix4x4 -> Matrix3x3
+void normalMatrixFromMatrix4x4(float* normalMat, float* mat) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            normalMat[i*3+j] = mat[i*4+j];
+        }
+    }
+}
+// (3) Transponieren
+void transponieren(float* transpMatrix, float* mat) {
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3; j++) {
+            transpMatrix[j*3+i] = mat[i*3+j];
+        }
+    }
+}
+
+//Funktion: Texture
+// (1) Bilddaten->Texturobjekt, image->texture
+void textureMapping(const char *str, GLuint* texture){
+>>>>>>> Sprint2
     //1.Externer Bilddatei laden
     stbi_set_flip_vertically_on_load(1); //Das Bild soll vertikal gespiegelt werden.
     int width, height, nrChannels;
@@ -278,6 +595,7 @@ void textureMapping(const char *str, GLuint* texture){
 
 //Hilfefunktion: Shader-Text-Identifizieren
 
+<<<<<<< HEAD
 //assert bis hier keine Zeiger prüfen
 
 //Bei shaderArten: VertexShader = 1
@@ -289,6 +607,11 @@ void shaderInit(GLuint *shader, unsigned char *shader_glsl, const unsigned int *
     //ShaderText kann nicht leeer sein 
     assert(*shader_glsl_len > 0);
 
+=======
+//Bei shaderArten: VertexShader = 1
+//                 FragementShader = 2
+void shaderInit(GLuint *shader, unsigned char *shader_glsl, const unsigned int *shader_glsl_len, int shaderType) {
+>>>>>>> Sprint2
     if (shaderType == 1) {
         *shader = glCreateShader(GL_VERTEX_SHADER); 
     } else if (shaderType == 2) {
@@ -336,10 +659,13 @@ void shaderProgramInit(GLuint* program, GLuint* vertexShader, GLuint* fragmentSh
 //         (1) Mit Texture: ObTexture=1
 //         (2) Ohne Texture: ObTexture=0
 void vboUndvao(long* vboLen, Flaeche8f* vbo, GLuint* vao, int ObTexture) {
+<<<<<<< HEAD
 
     //ObTexture muss richtig angegeben
     assert(ObTexture == 0 || ObTexture == 1);
 
+=======
+>>>>>>> Sprint2
     //vbo
     GLfloat objectVertices[*vboLen];
     for (long i=0; i<*vboLen/8; i++) {
@@ -409,10 +735,15 @@ void vboUndvao(long* vboLen, Flaeche8f* vbo, GLuint* vao, int ObTexture) {
         glEnableVertexAttribArray(2);
     }
 
+<<<<<<< HEAD
+=======
+
+>>>>>>> Sprint2
     glBindBuffer(GL_ARRAY_BUFFER, 0); //解绑了当前绑定的顶点缓冲对象
     glBindVertexArray(0);
 }
 
+<<<<<<< HEAD
 void init1(void) {
     //shader
     GLuint vertexShader_island;
@@ -470,6 +801,8 @@ void init2(void) {
 
 }
 
+=======
+>>>>>>> Sprint2
 void init3(void) {
     //shader
     GLuint vertexShader_energyObject;
@@ -479,15 +812,19 @@ void init3(void) {
     //shader program erzeugen und linken
     shaderProgramInit(&program_energyObject, &vertexShader_energyObject, &fragmentShader_energyObject);
 
+<<<<<<< HEAD
     //add
     glDeleteShader(vertexShader_energyObject);
     glDeleteShader(fragmentShader_energyObject);
 
+=======
+>>>>>>> Sprint2
     //obj-Datei lesen
     readOBJ("Ressouce/objDatei/energyObject.obj", &objVbo_energyObject, &objVboLen_energyObject);
     //VBO und VAO verarbeiten
     vboUndvao(&objVboLen_energyObject, objVbo_energyObject, &vao_energyObject, 0);
 
+<<<<<<< HEAD
     //glClearColor(191.0f/255.0f,217.0f/255.0f,204.0f/255.0f,1.0); //设置窗口背景颜色
 }
 
@@ -528,6 +865,10 @@ void init4(void){
     vboUndvao(&objVboLen_skybox, objVbo_skybox, &vao_skybox, 1);
     //glClearColor(191.0f/255.0f,217.0f/255.0f,204.0f/255.0f,1.0);
     
+=======
+    glClearColor(191.0f/255.0f,217.0f/255.0f,204.0f/255.0f,1.0); //设置窗口背景颜色
+
+>>>>>>> Sprint2
 }
 
 
@@ -660,6 +1001,7 @@ void drawSortetTransparenteObjects(long* vboLen, GLuint* vbo) {
     glEnable(GL_DEPTH_TEST);
 }
 
+<<<<<<< HEAD
 void objectCenterRechnen(Flaeche8f* objVbo, long* objVboLen, GLfloat* centerPunkt) {
     if (*objVboLen == 0) {
         centerPunkt[0] = 0.0f;
@@ -944,6 +1286,10 @@ void draw2(void) {
 }
 
 void draw3(void) {
+=======
+void draw3(void) {
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //清除了颜色缓冲区，将其填充为背景色
+>>>>>>> Sprint2
     glUseProgram(program_energyObject);        //使用指定的着色器程序 program 进行渲染
 
     //Uniform: Proj-Matrix (View ohne Perspektion -> View mit Perspektion)
@@ -971,6 +1317,7 @@ void draw3(void) {
     GLfloat verschieben[3] = {-4.0f, 0.0f, -3.0f};
     translate(tMatrix, iMatrix, verschieben);   
 
+<<<<<<< HEAD
     //Animation: energieObject
 
     //(1)初始化
@@ -1003,6 +1350,13 @@ void draw3(void) {
 
     matrix_multiply(energieObjectTransformationMatrix, tMatrix, energieObjectTransformationMatrix);
     glUniformMatrix4fv(worldLoc, 1, GL_TRUE, energieObjectTransformationMatrix);
+=======
+    //Animation: rotation
+    //!!!!!! Problem: inverseMatrix3x3 "det"
+    rotatey(arMatrix, tMatrix, -rotationAngle); //
+    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, arMatrix);
+    rotationAngle += 0.01f; //
+>>>>>>> Sprint2
 
     //Beleuchtung UniformPara Konfikurieren
     uniformParaFuerBeleuchtung(&program_energyObject);
@@ -1010,7 +1364,52 @@ void draw3(void) {
     //NormalenMatrix
     // • N = view * world = matrix_multiply(out,lookAtMatrix,arMatrix);
     // • N(4x4) -> M(3x3) -> inverse -> transponieren 转置矩阵 
+<<<<<<< HEAD
     normalenMatrix(&program_energyObject, lookAtMatrix, energieObjectTransformationMatrix);
+=======
+//    normalenMatrix(&program_energyObject, lookAtMatrix, arMatrix);
+
+    ////////////// Test
+    GLint normalenMatrixLoc = glGetUniformLocation(program_energyObject, "normalenMatrix");
+
+    //(1) view * world
+    GLfloat viewWordMatrix[16];
+    matrix_multiply(viewWordMatrix, lookAtMatrix, arMatrix);
+    printf("viewWordMatrix: \n");
+    printMatrix4x4(viewWordMatrix);
+
+    //(2) 4->3
+    GLfloat Mat4x4zuMat3x3[9];
+    normalMatrixFromMatrix4x4(Mat4x4zuMat3x3, viewWordMatrix);
+    printf("Mat4x4zuMat3x3: \n");
+    printMatrix3x3(Mat4x4zuMat3x3);
+
+    //(3) Inverse
+    GLfloat inverseMat3x3[9];
+    float detValue = inverseMatrix3x3(inverseMat3x3, Mat4x4zuMat3x3);
+    printf("inverseMat3x3: \n");
+    printMatrix3x3(inverseMat3x3);
+
+    //(4) Transponieren
+    GLfloat transpMatrix[9];
+    transponieren(transpMatrix, inverseMat3x3);
+    printf("transpMatrix: \n");
+    printMatrix3x3(transpMatrix);
+    printf("\n");
+
+    printf("\n");
+    printf("detValue=%f\n", detValue);
+    printf("\n");
+    if (detValue != 0.0){
+       glUniformMatrix3fv(normalenMatrixLoc, 1, GL_TRUE, transpMatrix);
+    } else {
+        /* ???????????????????? */
+    }
+
+    ////////////// Test
+
+
+>>>>>>> Sprint2
     
     glBindVertexArray(vao_energyObject);       //绑定了顶点数组对象 vao，指示OpenGL使用这个顶点数组对象来绘制图
     GLint status;
@@ -1031,6 +1430,7 @@ void draw3(void) {
     glBindBuffer(GL_ARRAY_BUFFER, vbo_energyObject);
     glDrawArrays(GL_TRIANGLES, 0, objVboLen_energyObject/8); 
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
+<<<<<<< HEAD
 
 }
 
@@ -1291,11 +1691,17 @@ void draw(void) {
 void framebuffer_size_callback(GLFWwindow *window, int w, int h) {
     width = w;
     height = h;
+=======
+}
+
+void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
+>>>>>>> Sprint2
     glViewport(0, 0, width, height); //x 和 y 是视口在窗口中的左下角位置的坐标
                                      //width 和 height 分别是视口的宽度和高度
                                      //以此来确保 OpenGL 渲染区域与新的窗口大小保持一致
 }
 
+<<<<<<< HEAD
 void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
     if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
         glfwSetWindowShouldClose(window, GL_TRUE);
@@ -1335,6 +1741,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
     }
 }
 
+=======
+>>>>>>> Sprint2
 int main(void) {
     printf("Hallo!\n");
 
@@ -1354,11 +1762,15 @@ int main(void) {
     }
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); //窗口大小改变时更新视口大小
                                                                        //确保渲染的内容能够正确地适应新的窗口大小
+<<<<<<< HEAD
     glfwSetKeyCallback(window, key_callback);
+=======
+>>>>>>> Sprint2
     glfwMakeContextCurrent(window); //将之前创建的窗口window设置为当前上下文
     glewInit(); //初始化GLEW库, 用于管理OpenGL的扩展
                 //使得开发者能够更方便地在不同平台上使用OpenGL的最新特性
 
+<<<<<<< HEAD
     init1();
     init2();
     init3();
@@ -1370,10 +1782,18 @@ int main(void) {
     rotationAngleGanzIsland = 0.0f;
     while (!glfwWindowShouldClose(window)) { //若窗口没有接到关闭的指令
         draw();
+=======
+    init3();
+
+    rotationAngle = 0.0f;
+    while (!glfwWindowShouldClose(window)) { //若窗口没有接到关闭的指令
+        draw3(); //执行绘制操作
+>>>>>>> Sprint2
         glfwSwapBuffers(window); //用于交换前后缓冲区，将已经渲染好的图像显示在屏幕上
         glfwPollEvents(); //处理窗口事件，比如鼠标移动、键盘按键等，保证窗口能够响应用户的输入操作
     }
 
+<<<<<<< HEAD
     //Ressource freigeben
     glDeleteTextures(1, &texture_stone1);
     glDeleteTextures(1, &texture_stone2);
@@ -1393,3 +1813,8 @@ int main(void) {
     glfwTerminate();
     return 0;
 }
+=======
+    glfwTerminate();
+    return 0;
+}
+>>>>>>> Sprint2

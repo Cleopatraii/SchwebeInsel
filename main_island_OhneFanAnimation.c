@@ -4,44 +4,21 @@
 #include <GLFW/glfw3.h>
 #include <math.h>
 #include <stdlib.h>
-<<<<<<< HEAD
-#include <stdbool.h>
-=======
->>>>>>> Sprint2
 #include "vertexShader_island.h"
 #include "fragmentShader_island.h"
 #include "vertexShader_restTeil.h"
 #include "fragmentShader_restTeil.h"
 #include "vertexShader_energyObject.h"
 #include "fragmentShader_energyObject.h"
-<<<<<<< HEAD
-#include "vertexShader_fullscreen.h"
-#include "fragmentShader_fullscreen.h"
-#include "fragmentShader_blur.h"
-#include "vertexShader_skybox.h"
-#include "fragmentShader_skybox.h"
-#include "main_funk.h"
-=======
->>>>>>> Sprint2
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "shader_Programm/stb_image.h"
 
-<<<<<<< HEAD
-GLuint program_island; //selbst definierte Shader-Programm
-GLuint program_restTeil;
-GLuint program_energyObject;
-GLuint program_fullscreen;
-GLuint program_blur;
-GLuint program_skybox;
-
-=======
 //Learn OpenGL Bloom
 
 GLuint program_island; //selbst definierte Shader-Programm
 GLuint program_restTeil;
 GLuint program_energyObject;
->>>>>>> Sprint2
 GLuint vao_island;     //vao 是 OpenGL 中一种状态对象，用于存储顶点数组相关的状态，包括顶点属性指针的设置和启用状态等
 GLuint vbo_island;     //创建缓冲对象标识符/变量(用来存储缓冲对象)，此时该变量相当于NULL
 GLuint vao_platform;
@@ -54,22 +31,7 @@ GLuint vao_tree;
 GLuint vbo_tree;
 GLuint vao_energyObject;
 GLuint vbo_energyObject;
-<<<<<<< HEAD
-GLuint vao_skybox;
-GLuint vbo_skybox;
-
-
-float rotationAngleFan; //Um objekt umdrehen zu können 
-float rotationAngleGanzIsland;
-float rotationAngleEnergieObject;
-
-=======
-float rotationAngleFan; //Um objekt umdrehen zu können 
-float rotationAngleGanzIsland;
-float rotationAngleEnergieObject;
-float rotationAngleIslandAroundEnergie;
-float rotateAroundCrystal;
->>>>>>> Sprint2
+float rotationAngle; //Um objekt umdrehen zu können 
 GLuint texture_stone1;
 GLuint texture_stone2;
 GLuint texture_stone3;
@@ -77,13 +39,6 @@ GLuint texture_platform;
 GLuint texture_tree;
 GLuint texture_fan;
 GLuint texture_haus;
-<<<<<<< HEAD
-GLuint texture_skybox;
-
-GLsizei width = 800;
-GLsizei height = 600;
-
-=======
 
 //Hilfefunktion: Matrix verarbeiten
 
@@ -309,20 +264,6 @@ void scale(GLfloat* out, GLfloat* in, GLfloat* v) {
 
 }
 //(3)Rotation
-void rotatex(GLfloat* out, GLfloat* in, GLfloat angle) {
-
-   //R(v)
-    GLfloat R[16] = {
-       1.0f,0.0f,0.0f,0.0f,
-       0.0f,cosf(angle),-sinf(angle),0.0f,
-       0.0f,sinf(angle),cosf(angle),0.0f,
-       0.0f,0.0f,0.0f,1.0f
-    };
-
-    // out = T(v) * in 
-    matrix_multiply(out,R,in);
-
-}
 void rotatey(GLfloat* out, GLfloat* in, GLfloat angle) {
 
    //R(v)
@@ -337,21 +278,6 @@ void rotatey(GLfloat* out, GLfloat* in, GLfloat angle) {
     matrix_multiply(out,R,in);
 
 }
-void rotatez(GLfloat* out, GLfloat* in, GLfloat angle) {
-
-   //R(v)
-    GLfloat R[16] = {
-       cosf(angle),-sinf(angle),0.0f,0.0f,
-       sinf(angle),cosf(angle),0.0f,0.0f,
-       0.0f,0.0f,1.0f,0.0f,
-       0.0f,0.0f,0.0f,1.0f
-    };
-
-    // out = T(v) * in 
-    matrix_multiply(out,R,in);
-
-}
->>>>>>> Sprint2
 
 //Hilfefunktion: Obj-Datei lesen
 
@@ -375,18 +301,6 @@ typedef struct {
 //Eingabe: (1) Zu ledense OBJ-Datei-Name, (2) leere vbo-objekt-Zeiger, (3) leere vbo-Große
 //Ausgabe: (1) Ausgefüllte vbo-objekt-Zeiger, (2) Ausgefüllte vbo-Große
 void readOBJ(const char* filename, Flaeche8f** vboOut, long* vboLen) {
-<<<<<<< HEAD
-
-    // Null prüfen
-    assert(filename != NULL);
-    assert(vboOut != NULL);
-    assert(vboLen != NULL);
-
-    // filename kann nicht leer sein
-    assert(strlen(filename) > 0); 
-    
-=======
->>>>>>> Sprint2
     FILE *file = fopen(filename, "r");
     if (!file) {
         printf("Datei konnte nicht geöffnet werden.");
@@ -503,12 +417,6 @@ long objVboLen_fan=0;
 //Object6: vbo von energyObject-Model
 Flaeche8f* objVbo_energyObject; 
 long objVboLen_energyObject=0; 
-<<<<<<< HEAD
-//Object7: vbo von Skybox-Model
-Flaeche8f* objVbo_skybox;
-long objVboLen_skybox=0;
-=======
->>>>>>> Sprint2
 
 //Funktion: Beleuchtung mit Normalenmatrix
 
@@ -532,24 +440,13 @@ typedef struct {
     Vec3 ambient;
 } QuelleLightParams;
 
-<<<<<<< HEAD
-//Funktion: Texture
-// (1) Bilddaten->Texturobjekt, image->texture
-void textureMapping(const char *str, GLuint* texture){
-
-    // Null prüfen
-    assert(str != NULL);
-    assert(texture != 0);
-    // filename kann nicht leer sein
-    assert(strlen(str) > 0);
-     
-=======
 // (1) Inverse-Matrix3x3 Berechnen
 void inverseMatrix3x3(float* result, float* mat) {
     float det = mat[0] * (mat[4]*mat[8] - mat[5]*mat[7]) -
                 mat[1] * (mat[3]*mat[8] - mat[5]*mat[6]) +
                 mat[2] * (mat[3]*mat[7] - mat[4]*mat[6]);
     if (det == 0.0) {
+        printf ("Warnung: det == 0 !!!!!\n");
         return;
     }
     float invDet = 1.0f / det;
@@ -584,7 +481,6 @@ void transponieren(float* transpMatrix, float* mat) {
 //Funktion: Texture
 // (1) Bilddaten->Texturobjekt, image->texture
 void textureMapping(const char *str, GLuint* texture){
->>>>>>> Sprint2
     //1.Externer Bilddatei laden
     stbi_set_flip_vertically_on_load(1); //Das Bild soll vertikal gespiegelt werden.
     int width, height, nrChannels;
@@ -617,23 +513,9 @@ void textureMapping(const char *str, GLuint* texture){
 
 //Hilfefunktion: Shader-Text-Identifizieren
 
-<<<<<<< HEAD
-//assert bis hier keine Zeiger prüfen
-
 //Bei shaderArten: VertexShader = 1
 //                 FragementShader = 2
 void shaderInit(GLuint *shader, unsigned char *shader_glsl, const unsigned int *shader_glsl_len, int shaderType) {
-
-    //Zurzeit darf nur VertexShader oder FragmentShader sein
-    assert(shaderType == 1 || shaderType == 2);
-    //ShaderText kann nicht leeer sein 
-    assert(*shader_glsl_len > 0);
-
-=======
-//Bei shaderArten: VertexShader = 1
-//                 FragementShader = 2
-void shaderInit(GLuint *shader, unsigned char *shader_glsl, const unsigned int *shader_glsl_len, int shaderType) {
->>>>>>> Sprint2
     if (shaderType == 1) {
         *shader = glCreateShader(GL_VERTEX_SHADER); 
     } else if (shaderType == 2) {
@@ -681,13 +563,6 @@ void shaderProgramInit(GLuint* program, GLuint* vertexShader, GLuint* fragmentSh
 //         (1) Mit Texture: ObTexture=1
 //         (2) Ohne Texture: ObTexture=0
 void vboUndvao(long* vboLen, Flaeche8f* vbo, GLuint* vao, int ObTexture) {
-<<<<<<< HEAD
-
-    //ObTexture muss richtig angegeben
-    assert(ObTexture == 0 || ObTexture == 1);
-
-=======
->>>>>>> Sprint2
     //vbo
     GLfloat objectVertices[*vboLen];
     for (long i=0; i<*vboLen/8; i++) {
@@ -757,10 +632,7 @@ void vboUndvao(long* vboLen, Flaeche8f* vbo, GLuint* vao, int ObTexture) {
         glEnableVertexAttribArray(2);
     }
 
-<<<<<<< HEAD
-=======
 
->>>>>>> Sprint2
     glBindBuffer(GL_ARRAY_BUFFER, 0); //解绑了当前绑定的顶点缓冲对象
     glBindVertexArray(0);
 }
@@ -774,13 +646,6 @@ void init1(void) {
     //shader program erzeugen und linken
     shaderProgramInit(&program_island, &vertexShader_island, &fragmentShader_island);
 
-<<<<<<< HEAD
-    //add
-    glDeleteShader(vertexShader_island);
-    glDeleteShader(fragmentShader_island);
-
-=======
->>>>>>> Sprint2
     //texture
     textureMapping("Ressouce/textureBild/2.Island_stone/stone1.jpeg", &texture_stone1);
     textureMapping("Ressouce/textureBild/2.Island_stone/stone2.jpeg", &texture_stone2);
@@ -791,13 +656,7 @@ void init1(void) {
     //VBO und VAO verarbeiten
     vboUndvao(&objVboLen_island, objVbo_island, &vao_island, 1);
 
-<<<<<<< HEAD
-    //glClearColor(191.0f/255.0f,217.0f/255.0f,204.0f/255.0f,1.0); //设置窗口背景颜色
-=======
     glClearColor(191.0f/255.0f,217.0f/255.0f,204.0f/255.0f,1.0); //设置窗口背景颜色
-
-
->>>>>>> Sprint2
 }
 void init2(void) {
     //shader
@@ -808,13 +667,6 @@ void init2(void) {
     //shader program erzeugen und linken
     shaderProgramInit(&program_restTeil, &vertexShader_restTeil, &fragmentShader_restTeil);
 
-<<<<<<< HEAD
-    //add
-    glDeleteShader(vertexShader_restTeil);
-    glDeleteShader(fragmentShader_restTeil);
-
-=======
->>>>>>> Sprint2
     //texture
     textureMapping("Ressouce/textureBild/1.Green_Plattform/Greenplattern.jpg", &texture_platform);
     textureMapping("Ressouce/textureBild/4.ReineFarbe/haus.png", &texture_haus);
@@ -843,64 +695,12 @@ void init3(void) {
     //shader program erzeugen und linken
     shaderProgramInit(&program_energyObject, &vertexShader_energyObject, &fragmentShader_energyObject);
 
-<<<<<<< HEAD
-    //add
-    glDeleteShader(vertexShader_energyObject);
-    glDeleteShader(fragmentShader_energyObject);
-
-=======
->>>>>>> Sprint2
     //obj-Datei lesen
     readOBJ("Ressouce/objDatei/energyObject.obj", &objVbo_energyObject, &objVboLen_energyObject);
     //VBO und VAO verarbeiten
     vboUndvao(&objVboLen_energyObject, objVbo_energyObject, &vao_energyObject, 0);
 
-<<<<<<< HEAD
-    //glClearColor(191.0f/255.0f,217.0f/255.0f,204.0f/255.0f,1.0); //设置窗口背景颜色
-}
-
-void initBloom(void) {
-    //shader
-    GLuint vertexShader_fullscreen;
-    shaderInit(&vertexShader_fullscreen, shader_Programm_vertexShader_fullscreen_glsl, &shader_Programm_vertexShader_fullscreen_glsl_len, 1);   //VertexShader init
-
-    //shader-program1
-    GLuint fragmentShader_fullscreen;
-    shaderInit(&fragmentShader_fullscreen, shader_Programm_fragmentShader_fullscreen_glsl, &shader_Programm_fragmentShader_fullscreen_glsl_len, 2); //FragmentShader init
-    shaderProgramInit(&program_fullscreen, &vertexShader_fullscreen, &fragmentShader_fullscreen);
-
-    glDeleteShader(fragmentShader_fullscreen);
-    
-    //shader-program2
-    GLuint fragmentShader_blur;
-    shaderInit(&fragmentShader_blur, shader_Programm_fragmentShader_blur_glsl, &shader_Programm_fragmentShader_blur_glsl_len, 2); //FragmentShader init
-    shaderProgramInit(&program_blur, &vertexShader_fullscreen, &fragmentShader_blur);
-
-    glDeleteShader(fragmentShader_blur);
-    glDeleteShader(vertexShader_fullscreen);
-}
-
-void init4(void){
-    GLuint vertexShader_skybox;
-    shaderInit(&vertexShader_skybox, shader_Programm_vertexShader_skybox_glsl, &shader_Programm_vertexShader_skybox_glsl_len, 1);
-    GLuint fragmentShader_skybox;
-    shaderInit(&fragmentShader_skybox, shader_Programm_fragmentShader_skybox_glsl, &shader_Programm_fragmentShader_skybox_glsl_len, 2);
-    
-    shaderProgramInit(&program_skybox, &vertexShader_skybox, &fragmentShader_skybox);
-
-    glDeleteShader(vertexShader_skybox);
-    glDeleteShader(fragmentShader_skybox);
-
-    textureMapping("Ressouce/textureBild/3.Hintergrund/skyHintergrund.jpeg", &texture_skybox);
-    readOBJ("Ressouce/objDatei/earth.obj", &objVbo_skybox, &objVboLen_skybox);
-    vboUndvao(&objVboLen_skybox, objVbo_skybox, &vao_skybox, 1);
-    //glClearColor(191.0f/255.0f,217.0f/255.0f,204.0f/255.0f,1.0);
-    
-=======
     glClearColor(191.0f/255.0f,217.0f/255.0f,204.0f/255.0f,1.0); //设置窗口背景颜色
-
-  
->>>>>>> Sprint2
 }
 
 
@@ -1033,42 +833,9 @@ void drawSortetTransparenteObjects(long* vboLen, GLuint* vbo) {
     glEnable(GL_DEPTH_TEST);
 }
 
-void objectCenterRechnen(Flaeche8f* objVbo, long* objVboLen, GLfloat* centerPunkt) {
-    if (*objVboLen == 0) {
-        centerPunkt[0] = 0.0f;
-        centerPunkt[1] = 0.0f;
-        centerPunkt[2] = 0.0f;
-        printf("objVboLen == 0 !!!!\n");
-        return;
-    }
-
-    long vertexNum = *objVboLen/8; //该 object 的顶点数量
-
-    // 初始化中心点坐标
-    centerPunkt[0] = 0.0f;
-    centerPunkt[1] = 0.0f;
-    centerPunkt[2] = 0.0f;
-
-    // 累加所有顶点的坐标分量
-    for (long i = 0; i < vertexNum; i++) {
-        centerPunkt[0] += objVbo[i].v1;
-        centerPunkt[1] += objVbo[i].v2;
-        centerPunkt[2] += objVbo[i].v3;
-    }
-
-    // 计算平均值
-    centerPunkt[0] /= vertexNum;
-    centerPunkt[1] /= vertexNum;
-    centerPunkt[2] /= vertexNum;
-}
-
 void draw1(void) {
 
-<<<<<<< HEAD
-    //glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //清除了颜色缓冲区，将其填充为背景色
-=======
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //清除了颜色缓冲区，将其填充为背景色
->>>>>>> Sprint2
     glUseProgram(program_island);        //使用指定的着色器程序 program 进行渲染
 
     //Uniform: Proj-Matrix (View ohne Perspektion -> View mit Perspektion)
@@ -1080,55 +847,25 @@ void draw1(void) {
     //Uniform: View-Matrix (World -> View)
     GLint viewLoc = glGetUniformLocation(program_island, "view");
     GLfloat lookAtMatrix[16];
-<<<<<<< HEAD
     GLfloat eye[3] = {0.0f,1.0f,5.0f};
-=======
-    GLfloat eye[3] = {0.0f,1.0f,8.0f};
->>>>>>> Sprint2
     GLfloat center[3] = {0.0f,0.0f,0.0f};
     GLfloat up[3] = {0.0f,1.0f,0.0f};
     lookAt(lookAtMatrix, eye, center, up);
     glUniformMatrix4fv(viewLoc, 1, GL_TRUE, lookAtMatrix);    
-<<<<<<< HEAD
-=======
-
-    GLfloat radiusAroundCrystal = 3.0; // 旋转半径
-    GLfloat crystalCenter[3] = {-0.0f, 0.0f, 0.0f}; // 水晶中心位置
-
-    rotationAngleIslandAroundEnergie += 0.01; // 更新旋转角度
-
-    GLfloat islandPosX = crystalCenter[0] + radiusAroundCrystal * cos(rotationAngleIslandAroundEnergie);
-    GLfloat islandPosZ = crystalCenter[2] + radiusAroundCrystal * sin(rotationAngleIslandAroundEnergie);
-    GLfloat XZPosition[3] = {islandPosX, crystalCenter[1], islandPosZ};
-
-    GLfloat islandTransformationMatrix[16];
-    identity(islandTransformationMatrix);
-    translate(islandTransformationMatrix, islandTransformationMatrix, XZPosition);
-
-
->>>>>>> Sprint2
     
     //Uniform: World-Matrix (Lokale -> World)
     GLint worldLoc = glGetUniformLocation(program_island, "world");
     GLfloat iMatrix[16];
-<<<<<<< HEAD
-=======
     GLfloat tMatrix[16];
     GLfloat sMatrix[16];
     GLfloat rMatrix[16];
->>>>>>> Sprint2
     GLfloat arMatrix[16];
     identity(iMatrix);
+    rotatey(rMatrix, iMatrix, -90.0f/180.f*M_PI);
     //*Animation: rotation
-    rotatey(arMatrix, iMatrix, -rotationAngleGanzIsland);
-<<<<<<< HEAD
+    rotatey(arMatrix, rMatrix, -rotationAngle);
     glUniformMatrix4fv(worldLoc, 1, GL_TRUE, arMatrix);
-=======
-matrix_multiply(islandTransformationMatrix, islandTransformationMatrix, arMatrix);
-    
-    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, islandTransformationMatrix);
->>>>>>> Sprint2
-    rotationAngleGanzIsland += 0.01f;
+    rotationAngle += 0.01f;
 
     //Beleuchtung UniformPara Konfikurieren
     uniformParaFuerBeleuchtung(&program_island);
@@ -1189,6 +926,7 @@ matrix_multiply(islandTransformationMatrix, islandTransformationMatrix, arMatrix
 
 void draw2(void) {
 
+//    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //清除了颜色缓冲区，将其填充为背景色
     glUseProgram(program_restTeil);        //使用指定的着色器程序 program 进行渲染
 
     //Uniform: Proj-Matrix (View ohne Perspektion -> View mit Perspektion)
@@ -1200,11 +938,7 @@ void draw2(void) {
     //Uniform: View-Matrix (World -> View)
     GLint viewLoc = glGetUniformLocation(program_restTeil, "view");
     GLfloat lookAtMatrix[16];
-<<<<<<< HEAD
     GLfloat eye[3] = {0.0f,1.0f,5.0f};
-=======
-    GLfloat eye[3] = {0.0f,1.0f,8.0f};
->>>>>>> Sprint2
     GLfloat center[3] = {0.0f,0.0f,0.0f};
     GLfloat up[3] = {0.0f,1.0f,0.0f};
     lookAt(lookAtMatrix, eye, center, up);
@@ -1212,78 +946,26 @@ void draw2(void) {
     
     //Uniform: World-Matrix (Lokale -> World)
     GLint worldLoc = glGetUniformLocation(program_restTeil, "world");
-
     GLfloat iMatrix[16];
+    GLfloat tMatrix[16];
+    GLfloat sMatrix[16];
     GLfloat rMatrix[16];
+    GLfloat arMatrix[16];
     identity(iMatrix);
     rotatey(rMatrix, iMatrix, -90.0f/180.f*M_PI);
-
-    //*Animation 1: fan
-
-    //接下来, 针对每个具体的物体的模型变换 (由 worldLoc 矩阵表示)
-    //这涉及到物体自身的旋转、缩放和平移, 即局部变换
-
-    //(1)初始化
-    GLfloat translateToOrigin[16];   // 平移到原点的矩阵
-    GLfloat translateBack[16];       // 平移回初始位置的矩阵
-    GLfloat rotationMatrixFan[16];   // 旋转矩阵
-    identity(translateToOrigin);
-    identity(translateBack);
-    identity(rotationMatrixFan);
-
-    //(2)获得该物体中点
-    GLfloat objectCenter[3];
-    objectCenterRechnen(objVbo_fan, &objVboLen_fan, objectCenter); //计算某个物体的中心坐标
-    printf("\nFan centerPunkt: %f, %f, %f\n\n", objectCenter[0], objectCenter[1], objectCenter[2]);
-
-    //(3)获得该物体的平移, 旋转矩阵
-    GLfloat verschiebZuOrigin[3] = {-objectCenter[0], -objectCenter[1], -objectCenter[2]};
-    GLfloat verschiebZurueck[3] = {objectCenter[0], objectCenter[1], objectCenter[2]};
-    translate(translateToOrigin, iMatrix, verschiebZuOrigin); //初始位置挪到原点
-    translate(translateBack, iMatrix, verschiebZurueck);      //原点挪到初始位置
-    rotatex(rotationMatrixFan, iMatrix, rotationAngleFan);    //旋转
-    rotationAngleFan += 0.04f;
-
-    //(4)获得该物体总的 TransformationMatrix (平移+旋转)
-    GLfloat fanTransformationMatrix[16];
-    identity(fanTransformationMatrix);
-    matrix_multiply(fanTransformationMatrix, translateToOrigin, fanTransformationMatrix);  // 平移到原点
-    matrix_multiply(fanTransformationMatrix, rotationMatrixFan, fanTransformationMatrix);  // 旋转
-    matrix_multiply(fanTransformationMatrix, translateBack, fanTransformationMatrix);      // 平移回去
-
-    //*Animation 2: restTeil
-
-    GLfloat ganzlandTransformationMatrix[16];
-    identity(iMatrix);
-    rotatey(ganzlandTransformationMatrix, iMatrix, -rotationAngleGanzIsland); //整个岛绕y轴旋转
-    rotationAngleGanzIsland += 0.01f;
+    //*Animation: rotation
+    rotatey(arMatrix, rMatrix, -rotationAngle);
+    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, arMatrix);
+    rotationAngle += 0.01f;
 
     //Beleuchtung UniformPara Konfikurieren
     uniformParaFuerBeleuchtung(&program_restTeil);
 
-<<<<<<< HEAD
-=======
-//     //*Animation 3: Rotation around crystalCenter
-    
-    GLfloat radiusAroundCrystal = 3.0; // //旋转半jing
-    GLfloat crystalCenter[3] = {-0.0f, 0.0f, 0.0f};
+    //NormalenMatrix
+    // • N = view * world = matrix_multiply(out,lookAtMatrix,arMatrix);
+    // • N(4x4) -> M(3x3) -> inverse -> transponieren 转置矩阵 
+    normalenMatrix(&program_restTeil, lookAtMatrix, arMatrix);
 
-    rotationAngleIslandAroundEnergie += 0.01; // 更新角度
-
-    GLfloat islandPosX = crystalCenter[0] + radiusAroundCrystal * cos(rotationAngleIslandAroundEnergie);
-    GLfloat islandPosZ = crystalCenter[2] + radiusAroundCrystal * sin(rotationAngleIslandAroundEnergie);
-    GLfloat XZPosition[3]={islandPosX, crystalCenter[1], islandPosZ};
-
-    GLfloat islandTransformationMatrix[16];
-    identity(islandTransformationMatrix);
-    translate(islandTransformationMatrix, islandTransformationMatrix, XZPosition);
-  
-     GLfloat finalTransformationMatrix[16];
-     identity(finalTransformationMatrix);
-     matrix_multiply(finalTransformationMatrix, islandTransformationMatrix, ganzlandTransformationMatrix);
-    
-
->>>>>>> Sprint2
     //vao
     GLint status;
     glValidateProgram(program_restTeil);   //验证着色器程序的有效性
@@ -1296,29 +978,15 @@ void draw2(void) {
         printf("%s",infoLog);
     }
     
-<<<<<<< HEAD
-    //Opaque Object
-=======
-   //Opaque Object
->>>>>>> Sprint2
+    //Transparent Object
+//    drawSortetTransparenteObjects(&objVboLen_island, &vboBufferObject);
+    
+    // //Opaque Object
     glEnable(GL_DEPTH_TEST);
-    //Bleuchtung mit umdrehen: NormalenMatrix für ganz Island
-    // • N = view * world = matrix_multiply(out,lookAtMatrix,arMatrix);
-    // • N(4x4) -> M(3x3) -> inverse -> transponieren 转置矩阵 
-<<<<<<< HEAD
-    normalenMatrix(&program_restTeil, lookAtMatrix, ganzlandTransformationMatrix);
-=======
-    normalenMatrix(&program_restTeil, lookAtMatrix, finalTransformationMatrix);
->>>>>>> Sprint2
 
     //(1) Platform
     glBindVertexArray(vao_platform);    
     glBindBuffer(GL_ARRAY_BUFFER, vbo_platform);
-<<<<<<< HEAD
-    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, ganzlandTransformationMatrix); //ganzlandTransformationMatrix
-=======
-    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, finalTransformationMatrix); //ganzlandTransformationMatrix
->>>>>>> Sprint2
     //texture_platform
     GLint texturePLoc = glGetUniformLocation(program_restTeil, "FragTexture_restTeil");
     glUniform1i(texturePLoc, 3);
@@ -1333,11 +1001,6 @@ void draw2(void) {
     //(2) Haus
     glBindVertexArray(vao_haus);    
     glBindBuffer(GL_ARRAY_BUFFER, vbo_haus);
-<<<<<<< HEAD
-    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, ganzlandTransformationMatrix);
-=======
-    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, finalTransformationMatrix);
->>>>>>> Sprint2
     //texture_haus
     GLint textureHausLoc = glGetUniformLocation(program_restTeil, "FragTexture_restTeil");
     glUniform1i(textureHausLoc, 4);
@@ -1349,17 +1012,9 @@ void draw2(void) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-<<<<<<< HEAD
     //(3) Tree
     glBindVertexArray(vao_tree);    
     glBindBuffer(GL_ARRAY_BUFFER, vbo_tree);
-    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, ganzlandTransformationMatrix);
-=======
-   //(3) Tree
-    glBindVertexArray(vao_tree);    
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_tree);
-    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, finalTransformationMatrix);
->>>>>>> Sprint2
     //texture_tree
     GLint textureTreeLoc = glGetUniformLocation(program_restTeil, "FragTexture_restTeil");
     glUniform1i(textureTreeLoc, 5);
@@ -1371,32 +1026,9 @@ void draw2(void) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-    //Transparent Object
-<<<<<<< HEAD
-
-=======
->>>>>>> Sprint2
     //(4) Fan
     glBindVertexArray(vao_fan);    
     glBindBuffer(GL_ARRAY_BUFFER, vbo_fan);
-
-    //Bleuchtung mit umdrehen: NormalenMatrix für fan
-    // • N = view * world = matrix_multiply(out,lookAtMatrix,arMatrix);
-    // • N(4x4) -> M(3x3) -> inverse -> transponieren 转置矩阵 
-    normalenMatrix(&program_restTeil, lookAtMatrix, fanTransformationMatrix);
-
-<<<<<<< HEAD
-    //WorldKoordinaten anpassen
-    GLfloat fantransform[16];
-    matrix_multiply(fantransform, ganzlandTransformationMatrix, fanTransformationMatrix);
-=======
-
-    //WorldKoordinaten anpassen
-    GLfloat fantransform[16];
-    matrix_multiply(fantransform, finalTransformationMatrix, fanTransformationMatrix);
->>>>>>> Sprint2
-    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, fantransform); //fanTransformationMatrix
-
     //texture_fan
     GLint textureFanLoc = glGetUniformLocation(program_restTeil, "FragTexture_restTeil");
     glUniform1i(textureFanLoc, 6);
@@ -1409,20 +1041,11 @@ void draw2(void) {
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindVertexArray(0);
 
-<<<<<<< HEAD
-=======
-
-
->>>>>>> Sprint2
 }
 
 void draw3(void) {
     glUseProgram(program_energyObject);        //使用指定的着色器程序 program 进行渲染
-<<<<<<< HEAD
 
-=======
-   
->>>>>>> Sprint2
     //Uniform: Proj-Matrix (View ohne Perspektion -> View mit Perspektion)
     GLint projLoc = glGetUniformLocation(program_energyObject, "proj");
     GLfloat perspectiveMatrix[16];
@@ -1432,11 +1055,7 @@ void draw3(void) {
     //Uniform: View-Matrix (World -> View)
     GLint viewLoc = glGetUniformLocation(program_energyObject, "view");
     GLfloat lookAtMatrix[16];
-<<<<<<< HEAD
     GLfloat eye[3] = {0.0f,2.5f,5.0f};
-=======
-    GLfloat eye[3] = {0.0f,2.5f,8.0f};
->>>>>>> Sprint2
     GLfloat center[3] = {0.0f,0.0f,0.0f};
     GLfloat up[3] = {0.0f,1.0f,0.0f};
     lookAt(lookAtMatrix, eye, center, up);
@@ -1446,49 +1065,17 @@ void draw3(void) {
     GLint worldLoc = glGetUniformLocation(program_energyObject, "world");
     GLfloat iMatrix[16];
     GLfloat tMatrix[16];
-<<<<<<< HEAD
-    identity(iMatrix);
-    GLfloat verschieben[3] = {-4.0f, 0.0f, -3.0f};
-=======
     GLfloat rMatrix[16];
     GLfloat arMatrix[16];
     identity(iMatrix);
-    GLfloat verschieben[3] = {0.0f, 0.0f, 0.0f};
->>>>>>> Sprint2
+    GLfloat verschieben[3] = {-4.0f, 0.0f, -3.0f};
     translate(tMatrix, iMatrix, verschieben);   
 
-    //Animation: energieObject
-
-    //(1)初始化
-    GLfloat translateToOrigin[16];   // 平移到原点的矩阵
-    GLfloat translateBack[16];       // 平移回初始位置的矩阵
-    GLfloat rotationMatrixEnergieObject[16];   // 旋转矩阵
-    identity(translateToOrigin);
-    identity(translateBack);
-    identity(rotationMatrixEnergieObject);
-
-    //(2)获得该物体中点
-    GLfloat objectCenter[3];
-    objectCenterRechnen(objVbo_energyObject, &objVboLen_energyObject, objectCenter); //计算某个物体的中心坐标
-    printf("\nEnergyObject centerPunkt: %f, %f, %f\n\n", objectCenter[0], objectCenter[1], objectCenter[2]);
-
-    //(3)获得该物体的平移, 旋转矩阵
-    GLfloat verschiebZuOrigin[3] = {-objectCenter[0], -objectCenter[1], -objectCenter[2]};
-    GLfloat verschiebZurueck[3] = {objectCenter[0], objectCenter[1], objectCenter[2]};
-    translate(translateToOrigin, iMatrix, verschiebZuOrigin); //初始位置挪到原点
-    translate(translateBack, iMatrix, verschiebZurueck);      //原点挪到初始位置
-    rotatey(rotationMatrixEnergieObject, iMatrix, rotationAngleEnergieObject);    //旋转
-    rotationAngleEnergieObject += 0.02f;
-
-    //(4)获得该物体总的 TransformationMatrix (平移+旋转)
-    GLfloat energieObjectTransformationMatrix[16];
-    identity(energieObjectTransformationMatrix);
-    matrix_multiply(energieObjectTransformationMatrix, translateToOrigin, energieObjectTransformationMatrix);            // 平移到原点
-    matrix_multiply(energieObjectTransformationMatrix, rotationMatrixEnergieObject, energieObjectTransformationMatrix);  // 旋转
-    matrix_multiply(energieObjectTransformationMatrix, translateBack, energieObjectTransformationMatrix);                // 平移回去
-
-    matrix_multiply(energieObjectTransformationMatrix, tMatrix, energieObjectTransformationMatrix);
-    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, energieObjectTransformationMatrix);
+    //Animation: rotation
+    //!!!!!! Problem: inverseMatrix3x3 "det"
+//    rotatey(arMatrix, tMatrix, -rotationAngle); //
+    glUniformMatrix4fv(worldLoc, 1, GL_TRUE, tMatrix);
+//    rotationAngle += 0.01f; //
 
     //Beleuchtung UniformPara Konfikurieren
     uniformParaFuerBeleuchtung(&program_energyObject);
@@ -1496,7 +1083,7 @@ void draw3(void) {
     //NormalenMatrix
     // • N = view * world = matrix_multiply(out,lookAtMatrix,arMatrix);
     // • N(4x4) -> M(3x3) -> inverse -> transponieren 转置矩阵 
-    normalenMatrix(&program_energyObject, lookAtMatrix, energieObjectTransformationMatrix);
+    normalenMatrix(&program_energyObject, lookAtMatrix, tMatrix);
     
     glBindVertexArray(vao_energyObject);       //绑定了顶点数组对象 vao，指示OpenGL使用这个顶点数组对象来绘制图
     GLint status;
@@ -1517,338 +1104,14 @@ void draw3(void) {
     glBindBuffer(GL_ARRAY_BUFFER, vbo_energyObject);
     glDrawArrays(GL_TRIANGLES, 0, objVboLen_energyObject/8); 
     glBindBuffer(GL_ARRAY_BUFFER, 0); 
-
-<<<<<<< HEAD
-}
-
-//相机位置
-    GLfloat eye_skybox[3] = {
-        1.0f, 1.0f, 1.0f
-    };
-    //相机朝向位置
-    GLfloat center_skybox[3] = {
-        0.1f, 0.1f, 0.1f
-    };
-    //相机上向量
-    GLfloat up_skybox[3] = {
-        0.0f, 1.0f, 0.0f
-    };
-
-void draw4(void){
-    glUseProgram(program_skybox);
-
-    
-    // 定义视图和投影矩阵
-    GLfloat viewMatrix[16], perMatrix[16];
-    float identityMatrix[16] = {
-        1.0f, 0.0f, 0.0f, 0.0f,
-        0.0f, 1.0f, 0.0f, 0.0f,
-        0.0f, 0.0f, 1.0f, 0.0f,
-        0.0f, 0.0f, 0.0f, 1.0f
-    };
-
-    // 计算视图和投影矩阵
-    lookAt(viewMatrix, eye_skybox, center_skybox, up_skybox);
-    perspective(perMatrix, 45.0f, 1.0f, 0.1f, 100.0f);
-
-    // 绑定 Skybox 顶点数组对象
-    glBindVertexArray(vao_skybox);
-
-    // 验证着色器程序
-    GLint status;
-    glValidateProgram(program_skybox);
-    glGetProgramiv(program_skybox, GL_VALIDATE_STATUS, &status);
-    if (!status) {
-        printf("Error validating program:");
-        GLchar infoLog[1024];
-        glGetProgramInfoLog(program_skybox, 1024, NULL, infoLog);
-        printf("%s", infoLog);
-    }
-
-    // 绑定 Skybox 顶点缓冲对象
-    glBindBuffer(GL_ARRAY_BUFFER, vbo_skybox);
-
-    // 启用深度测试
-    glEnable(GL_DEPTH_TEST);
-
-    // 获取并设置矩阵 Uniform 变量的位置
-    int modelLoc = glGetUniformLocation(program_skybox, "modelMatrix");
-    int viewLoc = glGetUniformLocation(program_skybox, "viewMatrix");
-    int projLoc = glGetUniformLocation(program_skybox, "projectionMatrix");
-
-    glUniformMatrix4fv(modelLoc, 1, GL_TRUE, identityMatrix);
-    glUniformMatrix4fv(viewLoc, 1, GL_TRUE, viewMatrix);
-    glUniformMatrix4fv(projLoc, 1, GL_TRUE, perMatrix);
-
-    // 设置纹理
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, texture_skybox);
-    glUniform1i(glGetUniformLocation(program_skybox, "texture_sky"), 0);
-
-    // 禁用深度写入
-    glDepthMask(GL_FALSE);
-
-    // 绘制 Skybox
-    glDrawArrays(GL_TRIANGLES, 0, objVboLen_skybox / 8);
-
-    // 重新启用深度写入
-    glDepthMask(GL_TRUE);
-
-    // 清理
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-}
-
-void RenderQuad() {
-    float quadVertices[] = {
-        // 位置     // 纹理坐标
-        -1.0f,  1.0f,  0.0f, 1.0f,
-        -1.0f, -1.0f,  0.0f, 0.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-
-        -1.0f,  1.0f,  0.0f, 1.0f,
-         1.0f, -1.0f,  1.0f, 0.0f,
-         1.0f,  1.0f,  1.0f, 1.0f
-    };
-
-    unsigned int quadVBO, quadVAO;
-    glGenVertexArrays(1, &quadVAO);
-    glGenBuffers(1, &quadVBO);
-
-    glBindVertexArray(quadVAO);
-    glBindBuffer(GL_ARRAY_BUFFER, quadVBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-
-    // 位置属性
-    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-    glEnableVertexAttribArray(0);
-    // 纹理坐标属性
-    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-    glEnableVertexAttribArray(2);
-
-    // 解绑VAO和VBO
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    glBindVertexArray(0);
-
-    // 绘制一个由两个三角形组成的矩形
-    glBindVertexArray(quadVAO);
-    glDrawArrays(GL_TRIANGLES, 0, 6); 
-    glBindVertexArray(0);
-}
-
-void draw(void) {
-
-    //Bloom 
-
-    //1.初始化 fbo, texture
-
-    // 创建帧缓冲对象
-    GLuint hdrFBO;
-    glGenFramebuffers(1, &hdrFBO);
-    glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO);
-
-    // 创建纹理1
-    GLuint texture_screen;
-    glGenTextures(1, &texture_screen);
-    glBindTexture(GL_TEXTURE_2D, texture_screen);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-
-    // 设置纹理参数1
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    // 将纹理附加到帧缓冲对象 attach texture to framebuffer1
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, texture_screen, 0);
-
-     // 创建纹理2
-    GLuint texture_brightness;
-    glGenTextures(1, &texture_brightness);
-    glBindTexture(GL_TEXTURE_2D, texture_brightness);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, NULL);
-
-    // 设置纹理参数2
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-
-    // 将纹理附加到帧缓冲对象 attach texture to framebuffer 2
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, texture_brightness, 0);
-
-    GLuint rbo;
-    glGenRenderbuffers(1, &rbo); // 使用 glGenRenderbuffers 代替 glCreateRenderbuffers
-    glBindRenderbuffer(GL_RENDERBUFFER, rbo);
-    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, width, height);
-    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
-
-    // 检查帧缓冲是否完整
-    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE) {
-        // 处理帧缓冲不完整的情况
-        printf("Framebuffer is not complete!\n");
-    }
-
-    //2.告诉OpenGL, 通过以下方式渲染到多个颜色缓冲区
-    //  glDrawBuffers默认情况下，OpenGL 仅渲染到帧缓冲区的第一个颜色附件，而忽略所有其他颜色附件
-    unsigned int attachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 };
-    glDrawBuffers(2, attachments);
-
-    //3.将frame存储至texture
-    glBindFramebuffer(GL_FRAMEBUFFER, hdrFBO); 
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    draw4(); //执行绘制操作
-    draw1(); 
-    draw2();
-    draw3();
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-    // Ping pong -> blur texture_brightness
-    GLuint pingpongFBO[2];
-    GLuint pingpongBuffers[2]; 
-    glGenFramebuffers(2, pingpongFBO);
-    glGenTextures(2, pingpongBuffers);
-    for (int i = 0; i < 2; i++) {
-        glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
-        glBindTexture(GL_TEXTURE_2D, pingpongBuffers[i]);
-        glTexImage2D(
-            GL_TEXTURE_2D, 0, GL_RGBA16F, width, height, 0, GL_RGBA, GL_FLOAT, NULL
-        );
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glFramebufferTexture2D(
-            GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongBuffers[i], 0
-        ); 
-    }
-
-    //unscharfen
-    bool horizontal = true, first_iteration = true;
-    int amount = 10;
-    glUseProgram(program_blur);
-    for (int i = 0; i < amount; i++) {
-        glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]); 
-        glUniform1i(glGetUniformLocation(program_blur, "horizontal"), horizontal); 
-
-        if (first_iteration) {
-            glBindTexture(GL_TEXTURE_2D, texture_brightness);
-            first_iteration = false;
-        } else {
-            glBindTexture(GL_TEXTURE_2D, pingpongBuffers[!horizontal]);
-        }
-
-        RenderQuad();
-        horizontal = !horizontal;
-    }
-    glBindFramebuffer(GL_FRAMEBUFFER, 0); 
-
-
-    //4.使用测试Shader程序, 查看Texture效果
-
-    // (1) texture_brightness
-    /*
-    glUseProgram(program_fullscreen);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // 绑定纹理
-    GLint textureScrLoc = glGetUniformLocation(program_fullscreen, "screenTexture");
-    glUniform1i(textureScrLoc, 10);
-    glActiveTexture(GL_TEXTURE10);
-    glBindTexture(GL_TEXTURE_2D, texture_screen);
-    RenderQuad();*/
-
-    // (2) texture_blur: pingpongBuffers[!horizontal]
-    glUseProgram(program_blur);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // 绑定纹理
-    GLint textureBlurLoc = glGetUniformLocation(program_blur, "image");
-    glUniform1i(textureBlurLoc, 11);
-    glActiveTexture(GL_TEXTURE11);
-    glBindTexture(GL_TEXTURE_2D, pingpongBuffers[!horizontal]); 
-    //RenderQuad();
-
-    // (3) Bloom
-    glUseProgram(program_fullscreen);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    // 绑定纹理: original screen
-    GLint textureScrLoc = glGetUniformLocation(program_fullscreen, "screenTexture");
-    glUniform1i(textureScrLoc, 10);
-    glActiveTexture(GL_TEXTURE10);
-    glBindTexture(GL_TEXTURE_2D, texture_screen);
-    // 绑定纹理: blur Bloom
-    GLint textureBloomLoc = glGetUniformLocation(program_fullscreen, "bloomBlurTexture"); //frage
-    glUniform1i(textureBloomLoc, 11);
-    glActiveTexture(GL_TEXTURE11);
-//    glBindTexture(GL_TEXTURE_2D, pingpongBuffers[!horizontal]);  //!!!!!!!!!!!!!!!!!!!!
-    RenderQuad();
-    
-    //Ressource freigeben
-    glDeleteFramebuffers(1, &hdrFBO);
-    glDeleteTextures(1, &texture_screen);
-    glDeleteTextures(1, &texture_brightness);
-    glDeleteFramebuffers(2, pingpongFBO);
-    glDeleteTextures(2, pingpongBuffers);
- 
-}
-
-void framebuffer_size_callback(GLFWwindow *window, int w, int h) {
-    width = w;
-    height = h;
-=======
-
-    
 }
 
 void framebuffer_size_callback(GLFWwindow *window, int width, int height) {
->>>>>>> Sprint2
     glViewport(0, 0, width, height); //x 和 y 是视口在窗口中的左下角位置的坐标
                                      //width 和 height 分别是视口的宽度和高度
                                      //以此来确保 OpenGL 渲染区域与新的窗口大小保持一致
 }
 
-<<<<<<< HEAD
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mode) {
-    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) {
-        glfwSetWindowShouldClose(window, GL_TRUE);
-    }
-    float cameraSpeed = 0.05;
-    // 控制摄像机移动
-    //FORWARD
-    if (key == GLFW_KEY_W) {
-        eye_skybox[2] += cameraSpeed;
-        
-    }
-    
-    //BACKWORD
-    if (key == GLFW_KEY_S) {
-        eye_skybox[2] -= cameraSpeed;
-    }
-
-    //UPWARD
-    if (key == GLFW_KEY_A) {
-        eye_skybox[1] += cameraSpeed;
-    }
-
-    //DOWNWARD
-    if (key == GLFW_KEY_D) {
-        eye_skybox[1] -= cameraSpeed;
-
-    }
-
-    //LEFT
-    if (key == GLFW_KEY_Q){
-        eye_skybox[0] -= cameraSpeed;
-    }
-
-    //RIGHT
-    if (key == GLFW_KEY_E){
-        eye_skybox[0] += cameraSpeed;
-    } 
-}
-
-=======
->>>>>>> Sprint2
 int main(void) {
     printf("Hallo!\n");
 
@@ -1868,10 +1131,6 @@ int main(void) {
     }
     glfwSetFramebufferSizeCallback(window, framebuffer_size_callback); //窗口大小改变时更新视口大小
                                                                        //确保渲染的内容能够正确地适应新的窗口大小
-<<<<<<< HEAD
-    glfwSetKeyCallback(window, key_callback);
-=======
->>>>>>> Sprint2
     glfwMakeContextCurrent(window); //将之前创建的窗口window设置为当前上下文
     glewInit(); //初始化GLEW库, 用于管理OpenGL的扩展
                 //使得开发者能够更方便地在不同平台上使用OpenGL的最新特性
@@ -1879,49 +1138,16 @@ int main(void) {
     init1();
     init2();
     init3();
-<<<<<<< HEAD
-    init4();
-    initBloom();
-=======
->>>>>>> Sprint2
 
-    rotationAngleEnergieObject = 0.0f;
-    rotationAngleFan = 0.0f;
-    rotationAngleGanzIsland = 0.0f;
-<<<<<<< HEAD
-    while (!glfwWindowShouldClose(window)) { //若窗口没有接到关闭的指令
-        draw();
-=======
-    rotationAngleIslandAroundEnergie = 0.0f;
+    rotationAngle = 0.0f;
     while (!glfwWindowShouldClose(window)) { //若窗口没有接到关闭的指令
         draw1(); //执行绘制操作
         draw2();
         draw3();
->>>>>>> Sprint2
         glfwSwapBuffers(window); //用于交换前后缓冲区，将已经渲染好的图像显示在屏幕上
         glfwPollEvents(); //处理窗口事件，比如鼠标移动、键盘按键等，保证窗口能够响应用户的输入操作
     }
 
-<<<<<<< HEAD
-    //Ressource freigeben
-    glDeleteTextures(1, &texture_stone1);
-    glDeleteTextures(1, &texture_stone2);
-    glDeleteTextures(1, &texture_stone3);
-    glDeleteTextures(1, &texture_fan);
-    glDeleteTextures(1, &texture_haus);
-    glDeleteTextures(1, &texture_platform);
-    glDeleteTextures(1, &texture_tree);
-    glDeleteTextures(1, &texture_skybox);
-
-    glDeleteProgram(program_island);
-    glDeleteProgram(program_restTeil);
-    glDeleteProgram(program_energyObject);
-    glDeleteProgram(program_fullscreen);
-    glDeleteProgram(program_blur);
-    glDeleteProgram(program_skybox);
-
-=======
->>>>>>> Sprint2
     glfwTerminate();
     return 0;
 }

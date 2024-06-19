@@ -22,8 +22,16 @@ in vec3 FragPosition;
 in vec3 vertexZuFragmentNormal;
 
 //3.Output
+<<<<<<< HEAD
 layout (location = 0) out vec4 FragColor;   //GL_COLOR_ATTACHMENT0
 layout (location = 1) out vec4 BrightColor; //Bloom: GL_COLOR_ATTACHMENT1
+=======
+out vec4 FragColor;
+//out vec4 BrightColor; // 高亮输出
+
+//layout(location = 0) out vec4 FragColor;  // 常规颜色输出
+//layout(location = 1) out vec4 BrightColor; // 高亮颜色输出
+>>>>>>> Sprint2
 
 void main() {
 
@@ -48,6 +56,7 @@ void main() {
    float spec = pow(max(dot(augenRichtung, reflectRichtung), 0.0), mat.shininess); // 偏差夹脚 (r,a)，Phone-Beleuchtungsmodellen
 //   resultColor += mat.specular * light.color * spec; 
 
+<<<<<<< HEAD
    FragColor = vec4(resultColor, 1.0);
 
    float heiligkeit = dot(FragColor.rgb, vec3(0.2126f, 0.7152f, 0.0722f)); //vec3 的这个向量表示人眼对RGB颜色的敏感度
@@ -58,4 +67,11 @@ void main() {
       BrightColor = vec4(1.0, FragColor.g*0.3, 0.0, 1.0f); //Emissivierte rot Licht, weniger Beeinflusst von Gelbe-Lichtquelle
    else
       BrightColor = vec4(0.0f, 0.0f, 0.0f, 1.0f);
+=======
+ // 总亮度，可以调整阈值以获取不同的高亮效果
+ //  float brightness = dot(resultColor, vec3(0.2126, 0.7152, 0.0722));
+ //  BrightColor = brightness > 1.5 ? vec4(resultColor, 1.0) : vec4(0.0, 0.0, 0.0, 1.0);
+
+   FragColor = vec4(resultColor, 1.0);
+>>>>>>> Sprint2
 }

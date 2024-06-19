@@ -1,2 +1,0 @@
-//TESSTcancel
-#include <stdio.h>

@@ -31,7 +31,6 @@ in float fogFactor;
 layout (location = 0) out vec4 FragColor;   //GL_COLOR_ATTACHMENT0
 layout (location = 1) out vec4 BrightColor; //Bloom: GL_COLOR_ATTACHMENT1
 
-
 void main() {
 
    //1.Beleuchtung berechnen und Schattierun implementieren
@@ -62,15 +61,16 @@ void main() {
 
    // 3. Color berechnen (混合三种纹理)
    vec4 stoneTexture = mix(detailColor, shadowColor, shadowColor.r);  // Stone Texture
-   vec3 stoneColor = mix(stoneTexture, baseColor, step(0.5, detailColor.r)).rgb; // Stone Basis Farbe mit Texture
+   vec3 stoneColor = mix(baseColor, stoneTexture, 0.1).rgb; // Stone Basis Farbe mit Texture
    vec3 stoneMixColor = mix(vec3(0.2, 0.2, 0.2), stoneColor, ambi + diff + spec).rgb; // Lichtquelle1
    vec3 stoneFinColor = mix(stoneMixColor, vec3(0.2, 0.0, 0.0), diff2/2.0); // Lichtquelle2
 
    //4.Fog Color 
    vec3 fogColor = vec3(0.5, 0.5, 0.5);
-   vec3 finalColor = mix(stoneFinColor, fogColor, 1.0 - fogFactor); 
+   vec3 finalColor = mix(stoneFinColor.rgb, fogColor, 1.0 - fogFactor); 
 
-   //5.Final Color
-   FragColor = vec4(finalColor, 1.0);
+
+   //4.Final Color
+   FragColor = vec4(finalColor.rgb, 1.0);
 
 }

@@ -27,8 +27,6 @@ void main() {
    gl_Position = proj * view * world * vec4(vInPosition, 1.0);
    vec4 viewPosition=view * world * vec4(vInPosition, 1.0);
    float distance = -viewPosition.z;
-
-
    //2 Transformation für Beleuchtung
    vec4 FragPos = view * world * vec4(vInPosition, 1.0);            //Beleuchtung findet in View-Koordinaten statt
    FragPosition = FragPos.xyz / FragPos.w;                     //x,y,z durch w (Für Translation/Verschieben)
@@ -41,14 +39,8 @@ void main() {
    
    //Texture-Mapping
    texKoordinaten = textureCoodi;
-
-   // Fog Faktor rechnen
-   // float height = viewPosition.y;
-   float fogStart = 1; // 
+    
+     float fogStart = 1; // 雾开始的高度
     float fogEnd = 15; // 
    fogFactor = 1.0 - smoothstep(fogStart, fogEnd, distance);
-  
 }
-
-
-

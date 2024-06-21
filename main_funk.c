@@ -230,6 +230,7 @@ void identity(GLfloat* out) {
         }
     }
 }
+
 //(1)Translation
 void translate(GLfloat* out, GLfloat* in, GLfloat* v) {
     
@@ -295,6 +296,7 @@ void scale(GLfloat* out, GLfloat* in, GLfloat* v) {
     matrix_multiply(out,S,in);
 
 }
+
 //(3)Rotation
 void rotatex(GLfloat* out, GLfloat* in, GLfloat angle) {
 

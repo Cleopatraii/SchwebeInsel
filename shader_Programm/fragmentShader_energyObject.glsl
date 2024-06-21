@@ -33,27 +33,27 @@ void main() {
    vec3 resultColor = vec3(0.5, 0.0, 0.0);
 
    //  (1) Ambient
-   resultColor += mat.ambient * light.ambient;       // 1.环境光照 ambient
+   resultColor += mat.ambient * light.ambient;       // 1.Umgebungslicht  ambient
 
    //  (2) Diffuse
-   vec3 N = normalize(vertexZuFragmentNormal);                       // 法线方向 normal
-   vec3 L = normalize(light.position - FragPosition);    // 入射光方向 light = QuelleLicht_Position - vertex_position (view)
+   vec3 N = normalize(vertexZuFragmentNormal);                       // Normalenrichtung  normal
+   vec3 L = normalize(light.position - FragPosition);    // Einfallsrichtung  light = QuelleLicht_Position - vertex_position (view)
    //vec3 L = normalize(vec3(4.0, 4.0, 0.0) - FragPosition);
-   float diff = max(dot(N, L), 0.0);                     // 入射光角度 (l,n)
-   resultColor += mat.diffuse * light.color * diff;      // 2.漫反射光照 diffuse
+   float diff = max(dot(N, L), 0.0);                     // Einfallswinkel  (l,n)
+   resultColor += mat.diffuse * light.color * diff;      // diffuse
 
    //  (3) Spekular
-   vec3 augenRichtung = vec3(0.0, 0.0, 1.0);             // 视线方向
-   vec3 reflectRichtung = normalize(reflect(-L, N));     // 反射光方向
-   float spec = pow(max(dot(augenRichtung, reflectRichtung), 0.0), mat.shininess); // 偏差夹脚 (r,a)，Phone-Beleuchtungsmodellen
-//   resultColor += mat.specular * light.color * spec; 
+   vec3 augenRichtung = vec3(0.0, 0.0, 1.0);             // Blickrichtung
+   vec3 reflectRichtung = normalize(reflect(-L, N));     // Reflexionsrichtung
+   float spec = pow(max(dot(augenRichtung, reflectRichtung), 0.0), mat.shininess); // Abweichungswinkel  (r,a)，Phone-Beleuchtungsmodellen
+   //resultColor += mat.specular * light.color * spec; 
 
    FragColor = vec4(resultColor, 1.0);
 
-   float heiligkeit = dot(FragColor.rgb, vec3(0.2126f, 0.7152f, 0.0722f)); //vec3 的这个向量表示人眼对RGB颜色的敏感度
-                                                                           //通过加权和方法计算出的亮度，更加符合人类视觉的自然感受，使得生成的图像在视觉上更加真实
+   float heiligkeit = dot(FragColor.rgb, vec3(0.2126f, 0.7152f, 0.0722f)); // vec3 Dieser Vektor repräsentiert die Empfindlichkeit des menschlichen Auges gegenüber RGB-Farben
+                                                                           // Die durch eine gewichtete Summe berechnete Helligkeit entspricht besser dem natürlichen Empfinden des menschlichen Sehens, wodurch das erzeugte Bild visuell realistischer wird.
+   
    // (2) Nach Heiligkeit entscheidet man, ob man die zweite Texture benutzt oder nicht
-   //     根据亮度决定是否接受第二个纹理片段
    if (heiligkeit >= 0.00f) 
       BrightColor = vec4(1.0, FragColor.g*0.3, 0.0, 1.0f); //Emissivierte rot Licht, weniger Beeinflusst von Gelbe-Lichtquelle
    else

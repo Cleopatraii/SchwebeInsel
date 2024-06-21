@@ -32,22 +32,21 @@ void main() {
    //1.Beleuchtung berechnen und Schattierun implementieren
 
    //  (1) Ambient
-   float ambi = light.ambient.r;                           // 1.环境光照 ambient
-
+   float ambi = light.ambient.r;                           // 1.Umgebungslicht ambient
    //  (2) Diffuse
    //     2.1 Erstelichtquelle
-   vec3 N = normalize(vertexZuFragmentNormal);                       // 法线方向 normal
-   vec3 L = normalize(light.position - FragPosition);    // 入射光方向 light = QuelleLicht_Position - vertex_position (view)
+   vec3 N = normalize(vertexZuFragmentNormal);                       // Normalenrichtung normal
+   vec3 L = normalize(light.position - FragPosition);    // Einfallsrichtung Licht = Lichtquelle_Position - Vertex_Position (View)
    float diff = max(dot(N, L), 0.0);
    //     2.2 Zweite Lichtquelle
-   vec3 N2 = normalize(vertexZuFragmentNormal);                       // 法线方向 normal
+   vec3 N2 = normalize(vertexZuFragmentNormal);                       //Normalenrichtung normal
    vec3 L2 = normalize(vec3(0.0, -1.0, -8.0) - FragPosition);
-   float diff2 = max(dot(N2, L2), 0.0);                     // 入射光角度 (l,n)                     // 入射光角度 (l,n)
+   float diff2 = max(dot(N2, L2), 0.0);                     // Einfallswinkel (L, N)                   
    
    //  (3) Spekular
-   vec3 augenRichtung = vec3(0.0, 0.0, 1.0);             // 视线方向
-   vec3 reflectRichtung = normalize(reflect(-L, N));     // 反射光方向
-   float spec = pow(max(dot(augenRichtung, reflectRichtung), 0.0), mat.shininess); // 偏差夹脚 (r,a)，Phone-Beleuchtungsmodellen
+   vec3 augenRichtung = vec3(0.0, 0.0, 1.0);             // Blickrichtung
+   vec3 reflectRichtung = normalize(reflect(-L, N));     // Reflexionsrichtung
+   float spec = pow(max(dot(augenRichtung, reflectRichtung), 0.0), mat.shininess); // Abweichungswinkel (r, a), Phong-Beleuchtungsmodell
 
    // 2. Texture
    vec4 restTeilColor = texture(FragTexture_restTeil, texKoordinaten);

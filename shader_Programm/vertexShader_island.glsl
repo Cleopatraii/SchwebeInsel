@@ -38,7 +38,7 @@ void main() {
    //Texture-Mapping
    texKoordinaten = textureCoodi;
     
-   float fogStart = 1; // 雾开始的高度
-   float fogEnd = 15; // 
+   float fogStart = 1; 
+   float fogEnd = 15; 
    fogFactor = 1.0 - smoothstep(fogStart, fogEnd, distance);
 }

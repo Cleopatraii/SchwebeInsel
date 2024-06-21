@@ -3,9 +3,9 @@
 #include <GLFW/glfw3.h>
 #include <math.h>
 #include <assert.h>
-
 #include "main_funk.h"
 
+// Funktion zum Vergleichen von 4x4-Matrizen auf Gleichheit
 void floatEqual_4x4(float* mat1, float* mat2){
     for(int i = 0; i<16; i++){
         int resultScaled = (int)(mat1[i] * 100000);
@@ -18,7 +18,7 @@ void floatEqual_4x4(float* mat1, float* mat2){
     printf("OK\n");
 }
 
-
+// Funktion zum Testen der Normierung
 void test_Normierung(GLfloat *out, const GLfloat* in){
     printf("    normierung-funktion: ");
     normierung(out, in);
@@ -30,6 +30,7 @@ void test_Normierung(GLfloat *out, const GLfloat* in){
     }
 } 
 
+// Funktion zum Testen der Matrixmultiplikation
 void test_matrix_multiply(){
     printf("    matrix_multiply-funktion:");
     GLfloat mat1[16] = {
@@ -56,7 +57,7 @@ void test_matrix_multiply(){
     //printMatrix4x4(newresult);
     floatEqual_4x4(newresult, expectes);
 }
-
+// Funktion zum Testen der LookAt-Funktion
 void test_lookAt(){
     printf("    lookAt-funktion: ");
     float eye[] = {1.0f, 2.0f, 3.0f};
@@ -74,7 +75,7 @@ void test_lookAt(){
     //printMatrix4x4(out);
     floatEqual_4x4(out, expected);
 }
-
+// Funktion zum Testen der Perspektivenprojektion
 void test_perspective(){
     printf("    perspective-funktion: ");
     GLfloat fovy = M_PI / 4.0f; // 45 degrees
@@ -98,6 +99,7 @@ void test_perspective(){
 
 }
 
+// Funktion zum Testen der Identitätsmatrix
 void test_identity(GLfloat* out){
     printf("    identitiy-funktion test:");
     identity(out);
@@ -122,7 +124,7 @@ void test_identity(GLfloat* out){
     printf("OK\n");
     
 }
-
+// Funktion zum Testen der Translation
 void test_translate(GLfloat* in, GLfloat* v){
     printf("    translate-funktion: ");
     GLfloat out[16];
@@ -143,6 +145,7 @@ void test_translate(GLfloat* in, GLfloat* v){
     floatEqual_4x4(out, expected);
 }
 
+// Funktion zum Testen der Skalierung
 void test_scale(GLfloat* in, GLfloat* v){
     printf("    scale-funktion: ");
     GLfloat out[16];
@@ -170,6 +173,7 @@ GLfloat in_rotatex[16] = {
     };
 GLfloat angle = M_PI / 4.0f;
 
+// Funktion zum Testen der Rotation um die X-Achse
 void test_rotatex(GLfloat* in, GLfloat angle){
     printf("    rotatex-funktion: ");
     GLfloat out[16];
@@ -188,6 +192,8 @@ void test_rotatex(GLfloat* in, GLfloat angle){
     };
     floatEqual_4x4(out, expected);
 }
+
+// Funktion zum Testen der Rotation um die Y-Achse
 void test_rotatey(GLfloat* in, GLfloat angle){
     printf("    rotatey-funktion: ");
     GLfloat out[16];
@@ -206,6 +212,7 @@ void test_rotatey(GLfloat* in, GLfloat angle){
     };
     floatEqual_4x4(out, expected);
 }
+// Funktion zum Testen der Rotation um die Z-Achse
 void test_rotatez(GLfloat* in, GLfloat angle){
     printf("    rotatez-funktion: ");
     GLfloat out[16];
@@ -224,7 +231,7 @@ void test_rotatez(GLfloat* in, GLfloat angle){
     };
     floatEqual_4x4(out, expected);
 }
-
+// Funktion zum Testen der Inversen 3x3-Matrix
 void test_inverseMatrix3x3(float* result, float* mat){
     printf("    inverseMatrix3x3-funktion: ");
     inverseMatrix3x3(result, mat);
@@ -258,7 +265,7 @@ void test_inverseMatrix3x3(float* result, float* mat){
     }
     printf("OK\n");
 }
-
+// Funktion zum Testen der Normalenmatrix aus einer 4x4-Matrix
 void test_normalMatrixFromMatrix4x4(float* normalMat, float* mat){
     printf("    normalMatrixFromMatrix4x4-funktion: ");
     normalMatrixFromMatrix4x4(normalMat, mat);
@@ -272,7 +279,7 @@ void test_normalMatrixFromMatrix4x4(float* normalMat, float* mat){
     }
     printf("OK\n");
 }
-
+// Funktion zum Testen der Transponierung
 void test_transponieren(float* transpMatrix, float* mat){
     printf("    transponieren-funktion: ");
     transponieren(transpMatrix, mat);
@@ -299,11 +306,7 @@ int main(void){
     GLfloat out1[3];
     //test_Normierung(out1, in);
     test_Normierung(in, in);
-
-
     test_matrix_multiply();
-
-
     printf("\nMatrixoperationsfunktionen\n");
     float mat[9] = {
         1.0f, 2.0f, 3.0f,
@@ -312,8 +315,6 @@ int main(void){
     };
     GLfloat outMatrix2[9];
     test_inverseMatrix3x3(outMatrix2,mat);
-
-
     GLfloat matrix4_4[16] = {
         1.0f, 2.0f, 3.0f, 4.0f,
         5.0f, 6.0f, 7.0f, 8.0f,
@@ -322,27 +323,19 @@ int main(void){
     };
     GLfloat outMatrix3[9];
     test_normalMatrixFromMatrix4x4(outMatrix3, matrix4_4);
-
-    
     GLfloat matrix3_3[9] = {
         1.2f, 2.3f, 3.4f,
         4.5f, 5.6f, 6.7f,
         7.8f, 8.9f, 9.0f
     };
     GLfloat outMatrix[9];
-    //test_transponieren(outMatrix, matrix3_3);
     test_transponieren(matrix3_3, matrix3_3);
-
     printf("\nMatrixtransformationsfunktionen\n");
     //LookAt
     test_lookAt();
-
-
     //perspective
     test_perspective();
-
     
-    //
     GLfloat in_translate[16] = {
     2.0f, 0.0f, 0.0f, 0.0f,
     0.0f, 3.0f, 0.0f, 0.0f,
@@ -359,9 +352,6 @@ int main(void){
     0.0f, 0.0f, 0.0f, 1.0f
     };
     test_scale(in_scale, v);
-
-    //
-
     test_rotatex(in_rotatex, angle);
     test_rotatey(in_rotatex, angle);
     test_rotatez(in_rotatex, angle);

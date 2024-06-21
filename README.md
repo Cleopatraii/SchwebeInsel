@@ -1,7 +1,7 @@
 # SchwebeInsel
 
 ## Einführung
-Eine kurze Einführung in das Projekt. Erkläre, was das Programm macht und wofür es verwendet werden kann.
+Unser Projekt präsentiert eine Szene, in der eine schwebende Insel um einen Energiekristall rotiert. Auf der Insel befindet sich eine Windmühle, deren Flügel sich ebenfalls drehen. Die Szene ist in einem Skybox platziert, wobei sowohl die Insel als auch der Kristall Texturen und Phong-Beleuchtungseffekte verwenden. Zusätzlich haben wir Bloom-Effekte für den Kristall und Nebel-Effekte für die Insel implementiert. Benutzer können die Kameraposition über die Tastatur anpassen und die Skybox aus verschiedenen Blickwinkeln betrachten.
 
 ## Voraussetzungen
 Listet die Software und Bibliotheken auf, die zur Ausführung des Programms erforderlich sind.
@@ -11,8 +11,25 @@ Listet die Software und Bibliotheken auf, die zur Ausführung des Programms erfo
 - stb_image
 
 ### Installation
-git clone https://deinrepository.com/deinprojekt.git
-cd deinprojekt
+git clone git@github.com:Cleopatraii/SchwebeInsel.git
+cd ../SchwebeInsel
+
+### Erstellung des Projekts
+Mit einem Makefile: 
+make
+
+## Programm starten
+./cgIsland
+
+## Steuerung
+
+Erläutere, wie man mit deinem Programm interagiert, sobald es läuft. Füge Tastatur- und Maussteuerungen hinzu. Zum Beispiel:
+
+- `W` um vorwärts zu bewegen
+- `S` um rückwärts zu bewegen
+- Maus zum Umschauen
+- `ESC` zum Beenden des Programms
+
 
 ### Windows
 1. Installiere [CMake](https://cmake.org/download/) und füge es zum `PATH` hinzu.

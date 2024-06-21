@@ -69,8 +69,7 @@ void matrix_multiply(GLfloat* result, const GLfloat* a, const GLfloat* b) {
 }
 
 //Funktion: Zu World-Koordinatensystem gehen
-//   Szene transformieren, um Kamera im Ursprung zu bleiben
-//   就是有 eye, center, up的偏差，要利用out把这些偏差纠正过来
+//Szene transformieren, um Kamera im Ursprung zu bleiben
 void lookAt(GLfloat* out, GLfloat* eye, GLfloat* center, GLfloat* up) {
 
     // Null prüfen
@@ -154,7 +153,7 @@ void lookAt(GLfloat* out, GLfloat* eye, GLfloat* center, GLfloat* up) {
 }
 
 //Funktion: "view frustrum": Abbildung "Pyramidenstumpf" auf "Würfel"
-//  投影: (x,y,z)->(1,1,1)
+//  Projektion: (x,y,z)->(1,1,1)
 void perspective(GLfloat* out, GLfloat fovy, GLfloat aspect, GLfloat near, GLfloat far) {
 
     // Daten prüfen

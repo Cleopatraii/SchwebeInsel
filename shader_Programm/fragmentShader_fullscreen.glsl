@@ -12,21 +12,21 @@ void main() {
 
    float gamma = 1.0;
    float exposure = 1.2f;
-    
-   // 读取HDR颜色和Bloom颜色
+   
+   // HDR-Farben und Bloom-Farben auslesen
    vec3 hdrColor = texture(screenTexture, texKoordinaten).rgb;
    vec3 bloomColor = texture(bloomBlurTexture, texKoordinaten).rgb;
    
-   // 将Bloom颜色加到HDR颜色上（加性混合）
+   // Bloom-Farbe zu HDR-Farbe hinzufügen (additive Mischung)
    hdrColor += bloomColor;
 
-   // 进行色调映射
+   // Tonemapping durchführen
    vec3 result = vec3(1.0) - exp(-hdrColor * exposure);
 
-   // 进行伽玛校正
+   // Gamma-Korrektur durchführen
    result = pow(result, vec3(1.0 / gamma));
 
-   // 将结果赋值给片段颜色
+    // Ergebnis der Fragmentfarbe zuweisen
    FragColor = vec4(result, 1.0);
 
    //Test

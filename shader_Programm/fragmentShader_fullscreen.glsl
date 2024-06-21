@@ -29,10 +29,4 @@ void main() {
     // Ergebnis der Fragmentfarbe zuweisen
    FragColor = vec4(result, 1.0);
 
-   //Test
-//   FragColor = texture(screenTexture, texKoordinaten);
-//   FragColor = texture(bloomBlurTexture, texKoordinaten);
-//   FragColor = vec4(hdrColor, 1.0);
-//   FragColor = vec4(bloomColor, 1.0);
-
 }

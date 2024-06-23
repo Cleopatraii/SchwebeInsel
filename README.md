@@ -24,8 +24,9 @@ make
 ## Programm starten
 ./cgIsland
 
-##Tests für alle Funktion
+## Tests für alle Funktion
 make test_funk
+
 ./test_funk
 
 ## Steuerung

@@ -12,12 +12,10 @@ Listet die Software und Bibliotheken auf, die zur Ausführung des Programms erfo
 - stb_image
 
 ### Installation
-
 git clone git@github.com:Cleopatraii/SchwebeInsel.git
 cd ../SchwebeInsel
 
 ### Erstellung des Projekts
-
 Mit einem Makefile: 
 make
 
@@ -26,7 +24,6 @@ make
 
 ## Tests für alle Funktion
 make test_funk
-
 ./test_funk
 
 ## Steuerung
@@ -52,6 +49,8 @@ https://www.cgtrader.com/items/729337/download-page
 5.Texture-Picture2, “Stone für Island”: https://ambientcg.com/view?id=Ground068
 
 6.Texture-Umgebung: https://ambientcg.com/view?id=MorningSkyHDRI002A
+
+7.Datei-"stb_image.h": https://github.com/nothings/stb/blob/master/stb_image.h
 
 ##  Name der beteiligen Gruppenmitglieder
 Yi Zheng, Shuxin Liu, Siyuan Zhu

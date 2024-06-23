@@ -47,11 +47,11 @@ https://www.cgtrader.com/items/729337/download-page
 
 3.Bloom: https://learnopengl.com/Advanced-Lighting/Bloom
 
-4.Texture-Picture1, “Greenplatform”:
+4.Texture-Picture1, “Greenplatform”: https://www.textures.com/download/Grass0027/8962
 
-5.Texture-Picture2, “Stone für Island”:
+5.Texture-Picture2, “Stone für Island”: https://ambientcg.com/view?id=Ground068
 
-6.Texture-Umgebung: 
+6.Texture-Umgebung: https://ambientcg.com/view?id=MorningSkyHDRI002A
 
 ##  Name der beteiligen Gruppenmitglieder
 Yi Zheng, Shuxin Liu, Siyuan Zhu

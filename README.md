@@ -41,10 +41,15 @@ Die Interaktion mit dem Programm erfolgt über die Tastatur. Hier sind die spezi
 ## Quelle
 1.Ganz Island-3D-Model:
 https://www.cgtrader.com/items/729337/download-page
+  
 2.Bloom: https://www.youtube.com/watch?v=um9iCPUGyU4
+
 3.Bloom: https://learnopengl.com/Advanced-Lighting/Bloom
+
 4.Texture-Picture1, “Greenplatform”:
+
 5.Texture-Picture2, “Stone für Island”:
+
 6.Texture-Umgebung: 
 
 ##  Name der beteiligen Gruppenmitglieder

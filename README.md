@@ -1,6 +1,4 @@
 ##  SchwebeInsel
-##  Name der beteiligen Gruppenmitglieder
-Yi Zheng, Shuxin Liu, Siyuan Zhu
 
 ## Einführung
 Unser Projekt präsentiert eine strukturierte Szene (verschiedene Rationsgruppe), in der eine schwebende Insel um einen EnergieObjekt(Lichtkörper, Erste Lichtquelle) rotiert. Auf der Insel befindet sich eine Windmühle, deren Flügel (transparente Objekt) sich ebenfalls drehen. Die Szene ist in einem Skybox platziert (Verwendung einer Umgebungstexture), wobei die Insel Texturen (InselStein ist insbesondere mit MixTexturen) und Phong-Beleuchtungseffekte verwenden. Zusätzlich haben wir Bloom-Effekte für den EnergieObjektund und Nebel-Effekte für die Inselstein implementiert. Durch benutzerdefinierte Tastaturbefehle können Benutzer die Kameraposition anpassen (Interaktion), um die Skybox aus verschiedenen Blickwinkeln zu betrachten. Hinzu kommt noch eine zweite Lichtquelle, ein weiches gelbes Licht aus der Ferne. 
@@ -49,7 +47,8 @@ https://www.cgtrader.com/items/729337/download-page
 5.Texture-Picture2, “Stone für Island”:
 6.Texture-Umgebung: 
 
-
+##  Name der beteiligen Gruppenmitglieder
+Yi Zheng, Shuxin Liu, Siyuan Zhu
 
 
 

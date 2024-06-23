@@ -10,7 +10,7 @@ cgIsland: main_island.c main_funk.o vertexShader_island.h fragmentShader_island.
 	xxd -i $< > $@
 
 main_funk.o: main_funk.c main_funk.h
-	gcc -c main_funk.c -o main_funk.o $(GLEW_LIBS) $(GLFW_LIBS) $(CFLAGS)
+	gcc -c main_funk.c -o main_funk.o $(GLEW_LIBS) $(GLFW_LIBS)
 
 test_funk: test_funk.c main_funk.o
 	gcc -o test_funk test_funk.c main_funk.o $(GLEW_LIBS) $(GLFW_LIBS) -lm

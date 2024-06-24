@@ -21,10 +21,12 @@ make
 
 ## Programm starten
 make cgIsland
+
 ./cgIsland
 
 ## Tests für alle Funktion
 make test_funk
+
 ./test_funk
 
 ## Steuerung

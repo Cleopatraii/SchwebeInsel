@@ -20,6 +20,7 @@ Mit einem Makefile:
 make
 
 ## Programm starten
+make cgIsland
 ./cgIsland
 
 ## Tests für alle Funktion
